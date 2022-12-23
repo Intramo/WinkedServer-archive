@@ -41,6 +41,25 @@ class Session:
             "type": "truefalse",
             "question": "Ist Schnatterinchen ein Terrorist?",
             "isRight": True
+        },{
+            "type": "normal",
+            "question": "Was ist 2 + 2 * 2 (3 + 1)",
+            "A":{
+                "text": "32",
+                "correct": False
+            },
+            "B":{
+                "text": "24",
+                "correct": False
+            },
+            "C":{
+                "text": "18",
+                "correct": True
+            },
+            "D":{
+                "text": "42",
+                "correct": True
+            }
         }]
 
         self.currentQuestionNum = 0
