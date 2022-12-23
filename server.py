@@ -12,7 +12,6 @@ class Player:
         self.isHost:bool = host
 
         self.isRight = False
-        self.answer = None
 
 class Session:
     def __init__(self) -> None:
@@ -53,29 +52,34 @@ class Session:
             self.currentQuestionState = 0
             self.currentQuestionNum += 1
         if self.currentQuestionNum >= len(self.questions):
+            for p in self.players:
+                if not p.isHost:
+                    await sendStateChangePacket(p, state="waiting")
+                else:
+                    await sendStateChangePacket(p, state="hostPodium")
             return
 
-        q = self.questions[self.currentQuestionNum]
+        self.q = self.questions[self.currentQuestionNum]
         
         if self.currentQuestionState == 0:
             for p in self.players:
                 p.isRight = False
                 p.answer = None
                 if p.isHost:
-                    await sendStateChangePacket(p, state = "hostQuestion" , question = q["question"])
+                    await sendStateChangePacket(p, state = "hostQuestion" , question = self.q["question"])
             return
 
         if self.currentQuestionState == 1:
             for p in self.players:
-                if q["type"] == "normal":
+                if self.q["type"] == "normal":
                     if p.isHost:
                         await sendStateChangePacket(p,
                             state = "hostAnswers" ,
-                            question = q["question"],
-                            a=q["A"]["text"],
-                            b=q["B"]["text"],
-                            c=q["C"]["text"],
-                            d=q["D"]["text"]
+                            question = self.q["question"],
+                            a=self.q["A"]["text"],
+                            b=self.q["B"]["text"],
+                            c=self.q["C"]["text"],
+                            d=self.q["D"]["text"]
                         )
                     else:
                         await sendStateChangePacket(p,
@@ -85,11 +89,11 @@ class Session:
 
 
 
-                if q["type"] == "truefalse":
+                if self.q["type"] == "truefalse":
                     if p.isHost:
                         await sendStateChangePacket(p,
                             state = "hostAnswers" ,
-                            question = q["question"]
+                            question = self.q["question"]
                         )
                     else:
                         await sendStateChangePacket(p,
@@ -99,9 +103,25 @@ class Session:
             return
 
         if self.currentQuestionState == 2:
+            for p in self.players:
+                if not p.isHost:
+                    if p.isRight:
+                        p.points += 1000
+                        p.answerStreak += 1
+                        await sendStateChangePacket(p, state="playerCorrect")
+                    else:
+                        p.answerStreak = 0
+                        await sendStateChangePacket(p, state="playerWrong")
+                else:
+                    await sendStateChangePacket(p, state="hostResults")
             return
 
         if self.currentQuestionState == 3:
+            for p in self.players:
+                if not p.isHost:
+                    await sendStateChangePacket(p, state="waiting")
+                else:
+                    await sendStateChangePacket(p, state="hostLeaderboard")
             return
 
         
@@ -168,6 +188,17 @@ async def handler(websocket, path):
                 p = [p for p in s.players if p.socket == websocket][0]
                 if p.isHost:
                     await s.next()
+            
+            if packettype.lower() == "answer":
+                s = [s for s in sessions if True in [p.socket == websocket for p in s.players]][0]
+                p = [p for p in s.players if p.socket == websocket][0]
+                btn = msg["answer"]
+                
+                if s.q["type"] == "normal":
+                    p.isRight = s.q[btn]["correct"]
+                
+                if s.q["type"] == "truefalse":
+                    p.isRight = (s.q["isRight"] and btn == "Y") or (not s.q["isRight"] and btn == "N")
 
             print(f"Received message from {websocket}: {message}")
     finally:
