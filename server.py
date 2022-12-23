@@ -11,32 +11,100 @@ class Player:
         self.points:int = 0
         self.isHost:bool = host
 
+        self.isRight = False
+        self.answer = None
+
 class Session:
     def __init__(self) -> None:
         self.code = "".join([str(random.randint(0,9)) for i in range(7)])
         self.players:list[Player] = []
+
         self.questions = [{
             "type": "normal",
             "question": "Was macht Pittiplatsch bei den albanischen Rebellen?",
             "A":{
                 "text": "Spielen",
-                "corerect": True
+                "correct": True
             },
             "B":{
                 "text": "Im Kosovo einmarschieren",
-                "corerect": True
+                "correct": True
             },
             "C":{
                 "text": "Zivilisten erschießen",
-                "corerect": True
+                "correct": True
             },
             "D":{
                 "text": "Steuererklärung",
-                "corerect": True
+                "correct": True
             }
+        },{
+            "type": "truefalse",
+            "question": "Ist Schnatterinchen ein Terrorist?",
+            "isRight": True
         }]
+
         self.currentQuestionNum = 0
-        self.question = self.questions[self.currentQuestionNum]
+        self.currentQuestionState = -1
+    
+    async def next(self):
+        self.currentQuestionState += 1 # 0 Question, 1 Answers, 2 Results, 3 Leaderboard
+        if self.currentQuestionState > 3: 
+            self.currentQuestionState = 0
+            self.currentQuestionNum += 1
+        if self.currentQuestionNum >= len(self.questions):
+            return
+
+        q = self.questions[self.currentQuestionNum]
+        
+        if self.currentQuestionState == 0:
+            for p in self.players:
+                p.isRight = False
+                p.answer = None
+                if p.isHost:
+                    await sendStateChangePacket(p, state = "hostQuestion" , question = q["question"])
+            return
+
+        if self.currentQuestionState == 1:
+            for p in self.players:
+                if q["type"] == "normal":
+                    if p.isHost:
+                        await sendStateChangePacket(p,
+                            state = "hostAnswers" ,
+                            question = q["question"],
+                            a=q["A"]["text"],
+                            b=q["B"]["text"],
+                            c=q["C"]["text"],
+                            d=q["D"]["text"]
+                        )
+                    else:
+                        await sendStateChangePacket(p,
+                            state = "answerNormal",
+                            progress = f"{self.currentQuestionNum} von {len(self.questions)}"
+                        )
+
+
+
+                if q["type"] == "truefalse":
+                    if p.isHost:
+                        await sendStateChangePacket(p,
+                            state = "hostAnswers" ,
+                            question = q["question"]
+                        )
+                    else:
+                        await sendStateChangePacket(p,
+                            state = "answerNormal",
+                            progress = f"{self.currentQuestionNum} von {len(self.questions)}"
+                        )
+            return
+
+        if self.currentQuestionState == 2:
+            return
+
+        if self.currentQuestionState == 3:
+            return
+
+        
 
 
 connections = {}
@@ -94,6 +162,12 @@ async def handler(websocket, path):
                                 for p in s.players:
                                     if p.isHost:
                                         await p.socket.send(json.dumps({"packettype": "lobbyjoin", "name": pl.name}))
+            
+            if packettype.lower() == "next":
+                s = [s for s in sessions if True in [p.socket == websocket for p in s.players]][0]
+                p = [p for p in s.players if p.socket == websocket][0]
+                if p.isHost:
+                    await s.next()
 
             print(f"Received message from {websocket}: {message}")
     finally:
