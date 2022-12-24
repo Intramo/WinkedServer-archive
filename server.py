@@ -3,63 +3,65 @@ import websockets
 import json
 import random
 
+
 class Player:
     def __init__(self, s, name, host) -> None:
         self.socket = s
-        self.name:str = name
-        self.answerStreak:int = 0
-        self.points:int = 0
-        self.isHost:bool = host
+        self.name: str = name
+        self.answerStreak: int = 0
+        self.points: int = 0
+        self.isHost: bool = host
 
         self.isRight = False
 
+
 class Session:
     def __init__(self) -> None:
-        self.code = "".join([str(random.randint(0,9)) for i in range(7)])
-        self.players:list[Player] = []
+        self.code = "".join([str(random.randint(0, 9)) for i in range(7)])
+        self.players: list[Player] = []
 
         self.questions = [{
             "type": "normal",
             "question": "Was macht Pittiplatsch bei den albanischen Rebellen?",
             "duration": 10,
-            "A":{
+            "A": {
                 "text": "Spielen",
                 "correct": True
             },
-            "B":{
+            "B": {
                 "text": "Im Kosovo einmarschieren",
                 "correct": True
             },
-            "C":{
+            "C": {
                 "text": "Zivilisten erschießen",
                 "correct": True
             },
-            "D":{
+            "D": {
                 "text": "Steuererklärung",
                 "correct": True
             }
-        },{
+        }, {
             "type": "truefalse",
             "question": "Ist Schnatterinchen ein Terrorist?",
             "duration": 5,
             "isRight": True
-        },{
+        }, {
             "type": "normal",
             "question": "Was ist 2 + 2 * 2 (3 + 1)",
             "duration": 20,
-            "A":{
+            "A": {
                 "text": "32",
                 "correct": False
             },
-            "B":{
+            "B": {
                 "text": "24",
                 "correct": False
             },
-            "C":{
+            "C": {
                 "text": "18",
                 "correct": True
             },
-            "D":{
+            "D": {
                 "text": "42",
                 "correct": True
             }
@@ -67,10 +69,10 @@ class Session:
 
         self.currentQuestionNum = 0
         self.currentQuestionState = -1
-    
+
     async def next(self):
-        self.currentQuestionState += 1 # 0 Question, 1 Answers, 2 Results, 3 Leaderboard
-        if self.currentQuestionState > 3: 
+        self.currentQuestionState += 1  # 0 Question, 1 Answers, 2 Results, 3 Leaderboard
+        if self.currentQuestionState > 3:
             self.currentQuestionState = 0
             self.currentQuestionNum += 1
         if self.currentQuestionNum >= len(self.questions):
@@ -82,13 +84,13 @@ class Session:
             return
 
         self.q = self.questions[self.currentQuestionNum]
-        
+
         if self.currentQuestionState == 0:
             for p in self.players:
                 p.isRight = False
                 p.answer = None
                 if p.isHost:
-                    await sendStateChangePacket(p, state = "hostQuestion" , question = self.q["question"])
+                    await sendStateChangePacket(p, state="hostQuestion", question=self.q["question"])
             return
 
         if self.currentQuestionState == 1:
@@ -96,34 +98,32 @@ class Session:
                 if self.q["type"] == "normal":
                     if p.isHost:
                         await sendStateChangePacket(p,
-                            state = "hostAnswersNormal" ,
-                            question = self.q["question"],
-                            duration = self.q["duration"],
-                            a=self.q["A"]["text"],
-                            b=self.q["B"]["text"],
-                            c=self.q["C"]["text"],
-                            d=self.q["D"]["text"]
-                        )
+                                                    state="hostAnswersNormal",
+                                                    question=self.q["question"],
+                                                    duration=self.q["duration"],
+                                                    a=self.q["A"]["text"],
+                                                    b=self.q["B"]["text"],
+                                                    c=self.q["C"]["text"],
+                                                    d=self.q["D"]["text"]
+                                                    )
                     else:
                         await sendStateChangePacket(p,
-                            state = "answerNormal",
-                            progress = f"{self.currentQuestionNum} von {len(self.questions)}"
-                        )
-
-
+                                                    state="answerNormal",
+                                                    progress=f"{self.currentQuestionNum} von {len(self.questions)}"
+                                                    )
 
                 if self.q["type"] == "truefalse":
                     if p.isHost:
                         await sendStateChangePacket(p,
-                            state = "hostAnswersTrueFalse",
-                            duration = self.q["duration"],
-                            question = self.q["question"]
-                        )
+                                                    state="hostAnswersTrueFalse",
+                                                    duration=self.q["duration"],
+                                                    question=self.q["question"]
+                                                    )
                     else:
                         await sendStateChangePacket(p,
-                            state = "answerTrueFalse",
-                            progress = f"{self.currentQuestionNum} von {len(self.questions)}"
-                        )
+                                                    state="answerTrueFalse",
+                                                    progress=f"{self.currentQuestionNum} von {len(self.questions)}"
+                                                    )
             return
 
         if self.currentQuestionState == 2:
@@ -148,15 +148,14 @@ class Session:
                     await sendStateChangePacket(p, state="hostLeaderboard")
             return
 
-        
-
 
 connections = {}
 sessions = [Session()]
 
 print(sessions[0].code)
 
-async def sendStateChangePacket(player: Player, state:str = "waiting", answerCorrect:bool = False, progress:int = 0, question:str = "", a:str = "", b:str = "", c:str = "", d:str = "", numQuestions:int = 0, duration:int = 0):
+
+async def sendStateChangePacket(player: Player, state: str = "waiting", answerCorrect: bool = False, progress: int = 0, question: str = "", a: str = "", b: str = "", c: str = "", d: str = "", numQuestions: int = 0, duration: int = 0):
     await player.socket.send(json.dumps(
         {
             "packettype": "gamestate",
@@ -166,7 +165,7 @@ async def sendStateChangePacket(player: Player, state:str = "waiting", answerCor
             "playerName": player.name,
             "playerPoints": player.points,
             "answerCorrect": answerCorrect,
-            "progress": f"{str(progress)} von {str(numQuestions)}" ,
+            "progress": f"{str(progress)} von {str(numQuestions)}",
             "hostQuestionName": question if player.isHost else "",
             "hostOptionNameRed": a if player.isHost else "",
             "hostOptionNameBlue": b if player.isHost else "",
@@ -201,29 +200,33 @@ async def handler(websocket, path):
                             pl = Player(websocket, name, len(s.players) == 0)
                             s.players.append(pl)
 
-                            if pl.isHost: await sendStateChangePacket(pl, state="hostLobby")
+                            if pl.isHost:
+                                await sendStateChangePacket(pl, state="hostLobby")
                             if not pl.isHost:
                                 await sendStateChangePacket(pl, state="waiting")
                                 for p in s.players:
                                     if p.isHost:
                                         await p.socket.send(json.dumps({"packettype": "lobbyjoin", "name": pl.name}))
-            
+
             if packettype.lower() == "next":
-                s = [s for s in sessions if True in [p.socket == websocket for p in s.players]][0]
+                s = [s for s in sessions if True in [
+                    p.socket == websocket for p in s.players]][0]
                 p = [p for p in s.players if p.socket == websocket][0]
                 if p.isHost:
                     await s.next()
-            
+
             if packettype.lower() == "answer":
-                s = [s for s in sessions if True in [p.socket == websocket for p in s.players]][0]
+                s = [s for s in sessions if True in [
+                    p.socket == websocket for p in s.players]][0]
                 p = [p for p in s.players if p.socket == websocket][0]
                 btn = msg["answer"]
-                
+
                 if s.q["type"] == "normal":
                     p.isRight = s.q[btn]["correct"]
-                
+
                 if s.q["type"] == "truefalse":
-                    p.isRight = (s.q["isRight"] and btn == "Y") or (not s.q["isRight"] and btn == "N")
+                    p.isRight = (s.q["isRight"] and btn == "Y") or (
+                        not s.q["isRight"] and btn == "N")
     finally:
         del connections[websocket]
 
