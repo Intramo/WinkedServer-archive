@@ -21,6 +21,7 @@ class Session:
         self.questions = [{
             "type": "normal",
             "question": "Was macht Pittiplatsch bei den albanischen Rebellen?",
+            "duration": 10,
             "A":{
                 "text": "Spielen",
                 "correct": True
@@ -40,10 +41,12 @@ class Session:
         },{
             "type": "truefalse",
             "question": "Ist Schnatterinchen ein Terrorist?",
+            "duration": 5,
             "isRight": True
         },{
             "type": "normal",
             "question": "Was ist 2 + 2 * 2 (3 + 1)",
+            "duration": 20,
             "A":{
                 "text": "32",
                 "correct": False
@@ -93,8 +96,9 @@ class Session:
                 if self.q["type"] == "normal":
                     if p.isHost:
                         await sendStateChangePacket(p,
-                            state = "hostAnswers" ,
+                            state = "hostAnswersNormal" ,
                             question = self.q["question"],
+                            duration = self.q["duration"],
                             a=self.q["A"]["text"],
                             b=self.q["B"]["text"],
                             c=self.q["C"]["text"],
@@ -111,12 +115,13 @@ class Session:
                 if self.q["type"] == "truefalse":
                     if p.isHost:
                         await sendStateChangePacket(p,
-                            state = "hostAnswers" ,
+                            state = "hostAnswersTrueFalse",
+                            duration = self.q["duration"],
                             question = self.q["question"]
                         )
                     else:
                         await sendStateChangePacket(p,
-                            state = "answerNormal",
+                            state = "answerTrueFalse",
                             progress = f"{self.currentQuestionNum} von {len(self.questions)}"
                         )
             return
@@ -151,7 +156,7 @@ sessions = [Session()]
 
 print(sessions[0].code)
 
-async def sendStateChangePacket(player: Player, state:str = "waiting", answerCorrect:bool = False, progress:int = 0, question:str = "", a:str = "", b:str = "", c:str = "", d:str = "", numQuestions:int = 0):
+async def sendStateChangePacket(player: Player, state:str = "waiting", answerCorrect:bool = False, progress:int = 0, question:str = "", a:str = "", b:str = "", c:str = "", d:str = "", numQuestions:int = 0, duration:int = 0):
     await player.socket.send(json.dumps(
         {
             "packettype": "gamestate",
@@ -167,6 +172,7 @@ async def sendStateChangePacket(player: Player, state:str = "waiting", answerCor
             "hostOptionNameBlue": b if player.isHost else "",
             "hostOptionNameYellow": c if player.isHost else "",
             "hostOptionNameGreen": d if player.isHost else "",
+            "hostQuestionDuration": duration if player.isHost else 0
         }
     ))
 
@@ -218,8 +224,6 @@ async def handler(websocket, path):
                 
                 if s.q["type"] == "truefalse":
                     p.isRight = (s.q["isRight"] and btn == "Y") or (not s.q["isRight"] and btn == "N")
-
-            print(f"Received message from {websocket}: {message}")
     finally:
         del connections[websocket]
 
