@@ -1,7 +1,4 @@
-import asyncio
-import websockets
-import json
-import random
+import asyncio, websockets, json, random, os
 
 
 class Player:
@@ -20,52 +17,8 @@ class Session:
         self.code = "".join([str(random.randint(0, 9)) for i in range(7)])
         self.players: list[Player] = []
 
-        self.questions = [{
-            "type": "normal",
-            "question": "Was macht Pittiplatsch bei den albanischen Rebellen?",
-            "duration": 10,
-            "A": {
-                "text": "Spielen",
-                "correct": True
-            },
-            "B": {
-                "text": "Im Kosovo einmarschieren",
-                "correct": True
-            },
-            "C": {
-                "text": "Zivilisten erschießen",
-                "correct": True
-            },
-            "D": {
-                "text": "Steuererklärung",
-                "correct": True
-            }
-        }, {
-            "type": "truefalse",
-            "question": "Ist Schnatterinchen ein Terrorist?",
-            "duration": 5,
-            "isRight": True
-        }, {
-            "type": "normal",
-            "question": "Was ist 2 + 2 * 2 (3 + 1)",
-            "duration": 20,
-            "A": {
-                "text": "32",
-                "correct": False
-            },
-            "B": {
-                "text": "24",
-                "correct": False
-            },
-            "C": {
-                "text": "18",
-                "correct": True
-            },
-            "D": {
-                "text": "42",
-                "correct": True
-            }
-        }]
+        with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), "quizes/starwars.json"), "r") as f:
+            self.questions = json.load(f)["questions"]
 
         self.currentQuestionNum = 0
         self.currentQuestionState = -1
@@ -100,6 +53,14 @@ class Session:
             return
 
         if self.currentQuestionState == 1:
+            hasmedia = self.q["media"] != {}
+            media = ""
+            if hasmedia:
+                mediatype = list(self.q["media"].keys())[0]
+                mediasrc = self.q["media"][mediatype]
+                if mediatype == "img":
+                    media = f"<img src=\"{mediasrc}\"/>"
+
             for p in self.players:
                 if self.q["type"] == "normal":
                     if p.isHost:
@@ -110,7 +71,8 @@ class Session:
                                                     a=self.q["A"]["text"],
                                                     b=self.q["B"]["text"],
                                                     c=self.q["C"]["text"],
-                                                    d=self.q["D"]["text"]
+                                                    d=self.q["D"]["text"],
+                                                    media=media
                                                     )
                     else:
                         await sendStateChangePacket(p,
@@ -123,7 +85,8 @@ class Session:
                         await sendStateChangePacket(p,
                                                     state="hostAnswersTrueFalse",
                                                     duration=self.q["duration"],
-                                                    question=self.q["question"]
+                                                    question=self.q["question"],
+                                                    media=media
                                                     )
                     else:
                         await sendStateChangePacket(p,
@@ -161,7 +124,7 @@ class Session:
                             state="hostResultsTrueFalse",
                             question=self.q["question"],
                             amountRed=self.amountN,
-                            amountBlue=self.amountY,
+                            amountBlue=self.amountY
                         )
             return
 
@@ -195,7 +158,8 @@ async def sendStateChangePacket(
         amountRed: int = 0,
         amountBlue: int = 0,
         amountYellow: int = 0,
-        amountGreen: int = 0
+        amountGreen: int = 0,
+        media = "<img src=\"assets/placeholder.jpg\">"
     ):
     await player.socket.send(json.dumps(
         {
@@ -216,8 +180,8 @@ async def sendStateChangePacket(
             "hostAmountRed": amountRed if player.isHost else 0,
             "hostAmountBlue": amountBlue if player.isHost else 0,
             "hostAmountYellow": amountYellow if player.isHost else 0,
-            "hostAmountGreen": amountGreen if player.isHost else 0
-
+            "hostAmountGreen": amountGreen if player.isHost else 0,
+            "hostMedia": media if player.isHost else "<img src=\"assets/placeholder.jpg\">"
         }
     ))
 

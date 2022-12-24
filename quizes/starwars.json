@@ -1,0 +1,203 @@
+{
+    "questions": [
+        {
+            "type": "normal",
+            "media":{
+                "img": "https://images-cdn.kahoot.it/cdc3e926-5281-4a95-a8e3-24572209144c?auto=webp"
+            },
+            "question": "Auf welchem Planeten findet in 'Die Rache der Sith' das entscheidende Duell zwischen Anakin Skywalker und Obi-Wan Kenobi statt?",
+            "duration": 10,
+            "A": {
+                "text": "Mustafar",
+                "correct": true
+            },
+            "B": {
+                "text": "Hoth",
+                "correct": false
+            },
+            "C": {
+                "text": "Yavin 4",
+                "correct": false
+            },
+            "D": {
+                "text": "Exegol",
+                "correct": false
+            }
+        },
+        {
+            "type": "normal",
+            "media":{
+                "img": "https://images-cdn.kahoot.it/0f394cde-0ee8-4d2b-b0af-e55e2eabb79b?auto=webp"
+            },
+            "question": "In der Eröffnungsschlacht von 'Die letzten Jedi' führt Poe Dameron einen Bombenangriff auf welchen Schiffstyp?",
+            "duration": 10,
+            "A": {
+                "text": "Abfangjäger",
+                "correct": false
+            },
+            "B": {
+                "text": "Schlachtschiff",
+                "correct": true
+            },
+            "C": {
+                "text": "Frigatte",
+                "correct": false
+            },
+            "D": {
+                "text": "Zerstörer",
+                "correct": false
+            }
+        },
+        {
+            "type": "normal",
+            "media":{},
+            "question": "Welche dieser Figuren wird nie als Machtgeist gesehen?",
+            "duration": 10,
+            "A": {
+                "text": "Qui Gon Jinn",
+                "correct": true
+            },
+            "B": {
+                "text": "Luke Skywalker",
+                "correct": false
+            },
+            "C": {
+                "text": "Leia",
+                "correct": false
+            },
+            "D": {
+                "text": "Yoda",
+                "correct": false
+            }
+        },
+        {
+            "type": "normal",
+            "media":{
+                "img": "https://images-cdn.kahoot.it/7d22f3a8-0259-48d3-9446-aad969a4c3ea?auto=webp"
+            },
+            "question": "Welcher Figur gehört dieses Lichtschwert?",
+            "duration": 10,
+            "A": {
+                "text": "Kylo Ren",
+                "correct": false
+            },
+            "B": {
+                "text": "Emperor Palpatine",
+                "correct": false
+            },
+            "C": {
+                "text": "Count Dooku",
+                "correct": true
+            },
+            "D": {
+                "text": "Darth Vader",
+                "correct": false
+            }
+        },
+        {
+            "type": "normal",
+            "media":{
+                "img": "https://images-cdn.kahoot.it/aa57bacf-7d47-4953-a089-d8682f45cef5?auto=webp"
+            },
+            "question": "Wie lautet das Rufzeichen von Luke Skywalker in der Schlacht gegen den ersten Todesstern?",
+            "duration": 10,
+            "A": {
+                "text": "Red 5",
+                "correct": true
+            },
+            "B": {
+                "text": "Blue 9",
+                "correct": false
+            },
+            "C": {
+                "text": "Gold 4",
+                "correct": false
+            },
+            "D": {
+                "text": "Green 2",
+                "correct": false
+            }
+        },
+        {
+            "type": "normal",
+            "media":{
+                "img": "https://images-cdn.kahoot.it/861a11fd-867d-4a2d-bb77-b082a9c11655?auto=webp"
+            },
+            "question": "Was ist das seltene, flüchtige Material, das als Treibstoff in Hyperantrieben von Raumfahrzeugen verwendet wird?",
+            "duration": 10,
+            "A": {
+                "text": "Mithril",
+                "correct": false
+            },
+            "B": {
+                "text": "Cadmium",
+                "correct": false
+            },
+            "C": {
+                "text": "Element Zero",
+                "correct": false
+            },
+            "D": {
+                "text": "Coaxium",
+                "correct": true
+            }
+        },
+        {
+            "type": "normal",
+            "media":{
+                "img": "https://images-cdn.kahoot.it/1b056da8-4e37-4d97-a4a5-ddd5e0676053?auto=webp"
+            },
+            "question": "Wie viele Schauspieler spielten in der Original-Trilogie die Rolle des Darth Vader?",
+            "duration": 10,
+            "A": {
+                "text": "1",
+                "correct": false
+            },
+            "B": {
+                "text": "2",
+                "correct": false
+            },
+            "C": {
+                "text": "3",
+                "correct": false
+            },
+            "D": {
+                "text": "4",
+                "correct": true
+            }
+        },
+        {
+            "type": "normal",
+            "media":{
+                "img": "https://images-cdn.kahoot.it/1b056da8-4e37-4d97-a4a5-ddd5e0676053?auto=webp"
+            },
+            "question": "Wie viele Schauspieler spielten in der Original-Trilogie die Rolle des Darth Vader?",
+            "duration": 10,
+            "A": {
+                "text": "1",
+                "correct": false
+            },
+            "B": {
+                "text": "2",
+                "correct": false
+            },
+            "C": {
+                "text": "3",
+                "correct": false
+            },
+            "D": {
+                "text": "4",
+                "correct": true
+            }
+        },
+        {
+            "type": "truefalse",
+            "media":{
+                "img": "https://images-cdn.kahoot.it/c0530715-4ab2-4fa2-8bf2-7abd55d2317f?auto=webp"
+            },
+            "question": "Darth Vader sagte: 'Luke, ich bin dein Vater'.",
+            "duration": 10,
+            "isRight": false
+        }
+    ]
+}
