@@ -86,6 +86,12 @@ class Session:
         self.q = self.questions[self.currentQuestionNum]
 
         if self.currentQuestionState == 0:
+            self.amountA = 0
+            self.amountB = 0
+            self.amountC = 0
+            self.amountD = 0
+            self.amountY = 0
+            self.amountN = 0
             for p in self.players:
                 p.isRight = False
                 p.answer = None
@@ -137,7 +143,26 @@ class Session:
                         p.answerStreak = 0
                         await sendStateChangePacket(p, state="playerWrong")
                 else:
-                    await sendStateChangePacket(p, state="hostResults")
+                    if self.q["type"] == "normal":
+                        await sendStateChangePacket(p,
+                            state="hostResultsNormal",
+                            question=self.q["question"],
+                            a=self.q["A"]["text"],
+                            b=self.q["B"]["text"],
+                            c=self.q["C"]["text"],
+                            d=self.q["D"]["text"],
+                            amountRed=self.amountA,
+                            amountBlue=self.amountB,
+                            amountYellow=self.amountC,
+                            amountGreen=self.amountD
+                        )
+                    if self.q["type"] == "truefalse":
+                        await sendStateChangePacket(p,
+                            state="hostResultsTrueFalse",
+                            question=self.q["question"],
+                            amountRed=self.amountN,
+                            amountBlue=self.amountY,
+                        )
             return
 
         if self.currentQuestionState == 3:
@@ -155,7 +180,23 @@ sessions = [Session()]
 print(sessions[0].code)
 
 
-async def sendStateChangePacket(player: Player, state: str = "waiting", answerCorrect: bool = False, progress: int = 0, question: str = "", a: str = "", b: str = "", c: str = "", d: str = "", numQuestions: int = 0, duration: int = 0):
+async def sendStateChangePacket(
+        player: Player,
+        state: str = "waiting",
+        answerCorrect: bool = False,
+        progress: int = 0,
+        question: str = "",
+        a: str = "",
+        b: str = "",
+        c: str = "",
+        d: str = "",
+        numQuestions: int = 0,
+        duration: int = 0,
+        amountRed: int = 0,
+        amountBlue: int = 0,
+        amountYellow: int = 0,
+        amountGreen: int = 0
+    ):
     await player.socket.send(json.dumps(
         {
             "packettype": "gamestate",
@@ -171,7 +212,12 @@ async def sendStateChangePacket(player: Player, state: str = "waiting", answerCo
             "hostOptionNameBlue": b if player.isHost else "",
             "hostOptionNameYellow": c if player.isHost else "",
             "hostOptionNameGreen": d if player.isHost else "",
-            "hostQuestionDuration": duration if player.isHost else 0
+            "hostQuestionDuration": duration if player.isHost else 0,
+            "hostAmountRed": amountRed if player.isHost else 0,
+            "hostAmountBlue": amountBlue if player.isHost else 0,
+            "hostAmountYellow": amountYellow if player.isHost else 0,
+            "hostAmountGreen": amountGreen if player.isHost else 0
+
         }
     ))
 
@@ -220,6 +266,13 @@ async def handler(websocket, path):
                     p.socket == websocket for p in s.players]][0]
                 p = [p for p in s.players if p.socket == websocket][0]
                 btn = msg["answer"]
+
+                if btn == "A": s.amountA += 1
+                if btn == "B": s.amountB += 1
+                if btn == "C": s.amountC += 1
+                if btn == "D": s.amountD += 1
+                if btn == "Y": s.amountY += 1
+                if btn == "N": s.amountN += 1
 
                 if s.q["type"] == "normal":
                     p.isRight = s.q[btn]["correct"]
