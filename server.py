@@ -1,5 +1,124 @@
 import asyncio, websockets, json, random, os
 
+class SendPacket:
+    async def error(p, msg:str) -> None:
+        await p.socket.send(json.dumps({"packettype": "error", "message": msg}))
+    
+    async def waiting(p) -> None:
+        await p.socket.send(json.dumps({"packettype": "gameState", "gameState": "waiting"}))
+
+    async def lobbyJoin(p, name:str) -> None:
+        await p.socket.send(json.dumps({"packettype": "lobbyJoin", "name": name}))
+
+    async def addAnswerCount(p) -> None:
+        await p.socket.send(json.dumps({"packettype": "addAnswerCount"}))
+    
+    async def hostLobby(p, gameid:str) -> None:
+        await p.socket.send(json.dumps({
+            "packettype": "gameState",
+            "gameState": "hostLobby",
+            "gameid": gameid
+        }))
+    
+    async def playerAnswerNormal(p, name:str, buttonA:bool, buttonB:bool, buttonC:bool, buttonD:bool, points:int, progress:str, media:dict) -> None:
+        await p.socket.send(json.dumps({
+            "packettype": "gameState",
+            "gameState": "playerAnswerNormal",
+            "name": name,
+            "buttons":{
+                "A": buttonA,
+                "B": buttonB,
+                "C": buttonC,
+                "D": buttonD
+            },
+            "points": points,
+            "progress": progress,
+            "media": media
+        }))
+    
+    async def playerAnswerTrueFalse(p, name:str, points:int, progress:str, media:dict) -> None:
+        await p.socket.send(json.dumps({
+            "packettype": "gameState",
+            "gameState": "playerAnswerNormal",
+            "name": name,
+            "points": points,
+            "progress": progress,
+            "media": media
+        }))
+
+    async def playerResultWrong(p) -> None:
+        await p.socket.send(json.dumps({
+            "packettype": "gameState",
+            "gameState": "playerResultWrong"
+        }))
+    
+    async def playerResultCorrect(p, answerstreak:int) -> None:
+        await p.socket.send(json.dumps({
+            "packettype": "gameState",
+            "gameState": "playerResultCorrect",
+            "answerstreak": answerstreak
+        }))
+    
+    async def hostQuestion(p, question:str) -> None:
+        await p.socket.send(json.dumps({
+            "packettype": "gameState",
+            "gameState": "hostQuestion",
+            "question": question
+        }))
+    
+    async def hostAnswersNormal(p, question:str, duration:int, a:str, b:str, c:str, d:str, media:str) -> None:
+        await p.socket.send(json.dumps({
+            "packettype": "gameState",
+            "gameState": "hostAnswersNormal",
+            "question": question,
+            "duration": duration,
+            "answers": {
+                "A": a,
+                "B": b,
+                "C": c,
+                "D": d
+            },
+            "media": media
+        }))
+    
+    async def hostAnswersTrueFalse(p, question:str, duration:int, media:str) -> None:
+        await p.socket.send(json.dumps({
+            "packettype": "gameState",
+            "gameState": "hostAnswersNormal",
+            "question": question,
+            "duration": duration,
+            "media": media
+        }))
+    
+    async def hostResultsNormal(
+        p, question:str,
+        aEnabled:bool, aText:str, aCorrect:bool, aAmount:int,
+        bEnabled:bool, bText:str, bCorrect:bool, bAmount:int,
+        cEnabled:bool, cText:str, cCorrect:bool, cAmount:int,
+        dEnabled:bool, dText:str, dCorrect:bool, dAmount:int) -> None:
+
+        answers = {}
+        if aEnabled: answers["A"] = {"text": aText, "correct": aCorrect, "amount": aAmount}
+        if bEnabled: answers["B"] = {"text": bText, "correct": bCorrect, "amount": bAmount}
+        if cEnabled: answers["C"] = {"text": cText, "correct": cCorrect, "amount": cAmount}
+        if dEnabled: answers["D"] = {"text": dText, "correct": dCorrect, "amount": dAmount}
+
+        await p.socket.send(json.dumps({
+            "packettype": "gameState",
+            "gameState": "hostResults",
+            "question": question,
+            "answers": answers
+        }))
+    
+    async def hostResultsTrueFalse(p, question:str, isRight:bool, trueAmount:int, falseAmount:int) -> None:
+        await p.socket.send(json.dumps({
+            "packettype": "gameState",
+            "gameState": "hostResults",
+            "question": question,
+            "isRight": isRight,
+            "trueAmount": trueAmount,
+            "falseAmount": falseAmount
+        }))
 
 class Player:
     def __init__(self, s, name, host) -> None:
@@ -8,9 +127,7 @@ class Player:
         self.answerStreak: int = 0
         self.points: int = 0
         self.isHost: bool = host
-
-        self.isRight = False
-
+        self.isRight: bool = False
 
 class Session:
     def __init__(self) -> None:
@@ -22,21 +139,18 @@ class Session:
 
         self.currentQuestionNum = 0
         self.currentQuestionState = -1
-
+    
     async def next(self):
-        self.currentQuestionState += 1  # 0 Question, 1 Answers, 2 Results, 3 Leaderboard
-        if self.currentQuestionState > 3:
+        self.currentQuestionState += 1  # 0 Question, 1 Answers, 2 Results
+        if self.currentQuestionState > 2:
             self.currentQuestionState = 0
             self.currentQuestionNum += 1
         if self.currentQuestionNum >= len(self.questions):
             for p in self.players:
-                if not p.isHost:
-                    await sendStateChangePacket(p, state="waiting")
-                else:
-                    await sendStateChangePacket(p, state="hostPodium")
+                await SendPacket.waiting(p)
             return
 
-        self.q = self.questions[self.currentQuestionNum]
+        self.q:dict = self.questions[self.currentQuestionNum]
 
         if self.currentQuestionState == 0:
             self.amountA = 0
@@ -49,12 +163,12 @@ class Session:
                 p.isRight = False
                 p.answer = None
                 if p.isHost:
-                    await sendStateChangePacket(p, state="hostQuestion", question=self.q["question"])
+                    await SendPacket.hostQuestion(p, self.q["question"])
             return
 
         if self.currentQuestionState == 1:
-            hasmedia = self.q["media"] != {}
-            media = ""
+            hasmedia = self.q.get("media", {}) != {}
+            media = f"<h1>{self.q['question']}</h1>"
             if hasmedia:
                 mediatype = list(self.q["media"].keys())[0]
                 mediasrc = self.q["media"][mediatype]
@@ -64,35 +178,31 @@ class Session:
             for p in self.players:
                 if self.q["type"] == "normal":
                     if p.isHost:
-                        await sendStateChangePacket(p,
-                                                    state="hostAnswersNormal",
-                                                    question=self.q["question"],
-                                                    duration=self.q["duration"],
-                                                    a=self.q["A"]["text"],
-                                                    b=self.q["B"]["text"],
-                                                    c=self.q["C"]["text"],
-                                                    d=self.q["D"]["text"],
-                                                    media=media
-                                                    )
+                        await SendPacket.hostAnswersNormal(
+                            p,
+                            self.q["question"],
+                            self.q["duration"],
+                            self.q["A"]["text"] if "A" in self.q.keys() else "",
+                            self.q["B"]["text"] if "B" in self.q.keys() else "",
+                            self.q["C"]["text"] if "C" in self.q.keys() else "",
+                            self.q["D"]["text"] if "D" in self.q.keys() else "",
+                            media
+                        )
                     else:
-                        await sendStateChangePacket(p,
-                                                    state="answerNormal",
-                                                    progress=f"{self.currentQuestionNum} von {len(self.questions)}"
-                                                    )
-
+                        await SendPacket.playerAnswerNormal(
+                            p,
+                            p.name,
+                            "A" in self.q.keys(),
+                            "B" in self.q.keys(),
+                            "C" in self.q.keys(),
+                            "D" in self.q .keys(),
+                            p.points,
+                            f"{self.currentQuestionNum} von {len(self.questions)}",
+                            media
+                        )
                 if self.q["type"] == "truefalse":
-                    if p.isHost:
-                        await sendStateChangePacket(p,
-                                                    state="hostAnswersTrueFalse",
-                                                    duration=self.q["duration"],
-                                                    question=self.q["question"],
-                                                    media=media
-                                                    )
-                    else:
-                        await sendStateChangePacket(p,
-                                                    state="answerTrueFalse",
-                                                    progress=f"{self.currentQuestionNum} von {len(self.questions)}"
-                                                    )
+                    if p.isHost: await SendPacket.hostAnswersTrueFalse(p, self.q["question"], self.q["question"], media)
+                    else: await SendPacket.playerAnswerTrueFalse(p, p.name, p.points, f"{self.currentQuestionNum} von {len(self.questions)}", media)
             return
 
         if self.currentQuestionState == 2:
@@ -101,41 +211,22 @@ class Session:
                     if p.isRight:
                         p.points += 1000
                         p.answerStreak += 1
-                        await sendStateChangePacket(p, state="playerCorrect")
+                        await SendPacket.playerResultCorrect(p, p.answerStreak)
                     else:
                         p.answerStreak = 0
-                        await sendStateChangePacket(p, state="playerWrong")
+                        await SendPacket.playerResultWrong(p)
                 else:
                     if self.q["type"] == "normal":
-                        await sendStateChangePacket(p,
-                            state="hostResultsNormal",
-                            question=self.q["question"],
-                            a=self.q["A"]["text"],
-                            b=self.q["B"]["text"],
-                            c=self.q["C"]["text"],
-                            d=self.q["D"]["text"],
-                            amountRed=self.amountA,
-                            amountBlue=self.amountB,
-                            amountYellow=self.amountC,
-                            amountGreen=self.amountD
+                        await SendPacket.hostResultsNormal(
+                            p, self.q["question"],
+                            "A" in self.q.keys(), self.q["A"]["text"] if "A" in self.q.keys() else "", self.q["A"]["correct"] if "A" in self.q.keys() else "", self.amountA,
+                            "B" in self.q.keys(), self.q["B"]["text"] if "B" in self.q.keys() else "", self.q["B"]["correct"] if "B" in self.q.keys() else "", self.amountB,
+                            "C" in self.q.keys(), self.q["C"]["text"] if "C" in self.q.keys() else "", self.q["C"]["correct"] if "C" in self.q.keys() else "", self.amountC,
+                            "D" in self.q.keys(), self.q["D"]["text"] if "D" in self.q.keys() else "", self.q["D"]["correct"] if "D" in self.q.keys() else "", self.amountD
                         )
                     if self.q["type"] == "truefalse":
-                        await sendStateChangePacket(p,
-                            state="hostResultsTrueFalse",
-                            question=self.q["question"],
-                            amountRed=self.amountN,
-                            amountBlue=self.amountY
-                        )
+                        await SendPacket.hostResultsTrueFalse(p, self.q["question"], self.q["isRight"], self.amountY, self.amountN)
             return
-
-        if self.currentQuestionState == 3:
-            for p in self.players:
-                if not p.isHost:
-                    await sendStateChangePacket(p, state="waiting")
-                else:
-                    await sendStateChangePacket(p, state="hostLeaderboard")
-            return
-
 
 connections = {}
 sessions = [Session()]
@@ -143,47 +234,10 @@ sessions = [Session()]
 print(sessions[0].code)
 
 
-async def sendStateChangePacket(
-        player: Player,
-        state: str = "waiting",
-        answerCorrect: bool = False,
-        progress: int = 0,
-        question: str = "",
-        a: str = "",
-        b: str = "",
-        c: str = "",
-        d: str = "",
-        numQuestions: int = 0,
-        duration: int = 0,
-        amountRed: int = 0,
-        amountBlue: int = 0,
-        amountYellow: int = 0,
-        amountGreen: int = 0,
-        media = "<img src=\"assets/placeholder.jpg\">"
-    ):
-    await player.socket.send(json.dumps(
-        {
-            "packettype": "gamestate",
-            "gameState": state,
 
-            "playerAnswerStreak": player.answerStreak,
-            "playerName": player.name,
-            "playerPoints": player.points,
-            "answerCorrect": answerCorrect,
-            "progress": f"{str(progress)} von {str(numQuestions)}",
-            "hostQuestionName": question if player.isHost else "",
-            "hostOptionNameRed": a if player.isHost else "",
-            "hostOptionNameBlue": b if player.isHost else "",
-            "hostOptionNameYellow": c if player.isHost else "",
-            "hostOptionNameGreen": d if player.isHost else "",
-            "hostQuestionDuration": duration if player.isHost else 0,
-            "hostAmountRed": amountRed if player.isHost else 0,
-            "hostAmountBlue": amountBlue if player.isHost else 0,
-            "hostAmountYellow": amountYellow if player.isHost else 0,
-            "hostAmountGreen": amountGreen if player.isHost else 0,
-            "hostMedia": media if player.isHost else "<img src=\"assets/placeholder.jpg\">"
-        }
-    ))
+
+
+
 
 
 async def handler(websocket, path):
@@ -211,12 +265,12 @@ async def handler(websocket, path):
                             s.players.append(pl)
 
                             if pl.isHost:
-                                await sendStateChangePacket(pl, state="hostLobby")
+                                await SendPacket.hostLobby(pl, s.code)
                             if not pl.isHost:
-                                await sendStateChangePacket(pl, state="waiting")
+                                await SendPacket.waiting(pl)
                                 for p in s.players:
                                     if p.isHost:
-                                        await p.socket.send(json.dumps({"packettype": "lobbyjoin", "name": pl.name}))
+                                        await SendPacket.lobbyJoin(p, pl.name)
 
             if packettype.lower() == "next":
                 s = [s for s in sessions if True in [

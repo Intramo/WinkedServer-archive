@@ -149,10 +149,6 @@
             },
             "question": "Wie viele Schauspieler spielten in der Original-Trilogie die Rolle des Darth Vader?",
             "duration": 10,
-            "A": {
-                "text": "1",
-                "correct": false
-            },
             "B": {
                 "text": "2",
                 "correct": false
