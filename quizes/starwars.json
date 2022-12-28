@@ -163,30 +163,6 @@
             }
         },
         {
-            "type": "normal",
-            "media":{
-                "img": "https://images-cdn.kahoot.it/1b056da8-4e37-4d97-a4a5-ddd5e0676053?auto=webp"
-            },
-            "question": "Wie viele Schauspieler spielten in der Original-Trilogie die Rolle des Darth Vader?",
-            "duration": 10,
-            "A": {
-                "text": "1",
-                "correct": false
-            },
-            "B": {
-                "text": "2",
-                "correct": false
-            },
-            "C": {
-                "text": "3",
-                "correct": false
-            },
-            "D": {
-                "text": "4",
-                "correct": true
-            }
-        },
-        {
             "type": "truefalse",
             "media":{
                 "img": "https://images-cdn.kahoot.it/c0530715-4ab2-4fa2-8bf2-7abd55d2317f?auto=webp"

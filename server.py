@@ -39,7 +39,7 @@ class SendPacket:
     async def playerAnswerTrueFalse(p, name:str, points:int, progress:str, media:dict) -> None:
         await p.socket.send(json.dumps({
             "packettype": "gameState",
-            "gameState": "playerAnswerNormal",
+            "gameState": "playerAnswerTrueFalse",
             "name": name,
             "points": points,
             "progress": progress,
@@ -84,7 +84,7 @@ class SendPacket:
     async def hostAnswersTrueFalse(p, question:str, duration:int, media:str) -> None:
         await p.socket.send(json.dumps({
             "packettype": "gameState",
-            "gameState": "hostAnswersNormal",
+            "gameState": "hostAnswersTrueFalse",
             "question": question,
             "duration": duration,
             "media": media
