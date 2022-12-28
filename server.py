@@ -201,7 +201,7 @@ class Session:
                             media
                         )
                 if self.q["type"] == "truefalse":
-                    if p.isHost: await SendPacket.hostAnswersTrueFalse(p, self.q["question"], self.q["question"], media)
+                    if p.isHost: await SendPacket.hostAnswersTrueFalse(p, self.q["question"], self.q["duration"], media)
                     else: await SendPacket.playerAnswerTrueFalse(p, p.name, p.points, f"{self.currentQuestionNum} von {len(self.questions)}", media)
             return
 

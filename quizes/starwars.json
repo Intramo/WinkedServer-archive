@@ -1,6 +1,15 @@
 {
     "questions": [
         {
+            "type": "truefalse",
+            "media":{
+                "img": "https://images-cdn.kahoot.it/c0530715-4ab2-4fa2-8bf2-7abd55d2317f?auto=webp"
+            },
+            "question": "Darth Vader sagte: 'Luke, ich bin dein Vater'.",
+            "duration": 10,
+            "isRight": false
+        },
+        {
             "type": "normal",
             "media":{
                 "img": "https://images-cdn.kahoot.it/cdc3e926-5281-4a95-a8e3-24572209144c?auto=webp"
@@ -161,15 +170,6 @@
                 "text": "4",
                 "correct": true
             }
-        },
-        {
-            "type": "truefalse",
-            "media":{
-                "img": "https://images-cdn.kahoot.it/c0530715-4ab2-4fa2-8bf2-7abd55d2317f?auto=webp"
-            },
-            "question": "Darth Vader sagte: 'Luke, ich bin dein Vater'.",
-            "duration": 10,
-            "isRight": false
         }
     ]
 }
