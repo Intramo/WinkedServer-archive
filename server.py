@@ -105,7 +105,7 @@ class SendPacket:
 
         await p.socket.send(json.dumps({
             "packettype": "gameState",
-            "gameState": "hostResults",
+            "gameState": "hostResultsNormal",
             "question": question,
             "answers": answers
         }))
@@ -113,7 +113,7 @@ class SendPacket:
     async def hostResultsTrueFalse(p, question:str, isRight:bool, trueAmount:int, falseAmount:int) -> None:
         await p.socket.send(json.dumps({
             "packettype": "gameState",
-            "gameState": "hostResults",
+            "gameState": "hostResultsTrueFalse",
             "question": question,
             "isRight": isRight,
             "trueAmount": trueAmount,
@@ -283,7 +283,7 @@ async def handler(websocket, path):
                 s = [s for s in sessions if True in [
                     p.socket == websocket for p in s.players]][0]
                 p = [p for p in s.players if p.socket == websocket][0]
-                btn = msg["answer"]
+                btn = msg["button"]
 
                 if btn == "A": s.amountA += 1
                 if btn == "B": s.amountB += 1
@@ -296,8 +296,11 @@ async def handler(websocket, path):
                     p.isRight = s.q[btn]["correct"]
 
                 if s.q["type"] == "truefalse":
-                    p.isRight = (s.q["isRight"] and btn == "Y") or (
-                        not s.q["isRight"] and btn == "N")
+                    p.isRight = (s.q["isRight"] and btn == "Y") or (not s.q["isRight"] and btn == "N")
+                
+                for pl in s.players:
+                    if pl.isHost:
+                        await SendPacket.addAnswerCount(pl)
     finally:
         del connections[websocket]
 
