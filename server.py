@@ -48,7 +48,7 @@ class SendPacket:
             "points": points,
             "progress": progress
         }))
-    
+
     async def playerAnswerText(p, name: str, points: int, progress: str) -> None:
         await p.socket.send(json.dumps({
             "packettype": "gameState",
@@ -101,7 +101,7 @@ class SendPacket:
             "duration": duration,
             "media": media
         }))
-    
+
     async def hostAnswersText(p, question: str, duration: int, media: str) -> None:
         await p.socket.send(json.dumps({
             "packettype": "gameState",
@@ -148,7 +148,7 @@ class SendPacket:
             "trueAmount": trueAmount,
             "falseAmount": falseAmount
         }))
-    
+
     async def hostResultsText(p, question: str, correct: list, wrong: list) -> None:
         await p.socket.send(json.dumps({
             "packettype": "gameState",
@@ -157,6 +157,7 @@ class SendPacket:
             "correct": correct,
             "wrong": wrong
         }))
+
 
 class Player:
     def __init__(self, s, name, host) -> None:
@@ -246,7 +247,7 @@ class Session:
                         await SendPacket.hostAnswersTrueFalse(p, self.q["question"], self.q["duration"], media)
                     else:
                         await SendPacket.playerAnswerTrueFalse(p, p.name, p.points, f"{self.currentQuestionNum} von {len(self.questions)}")
-                
+
                 if self.q["type"].lower() == "text":
                     if p.isHost:
                         await SendPacket.hostAnswersText(p, self.q["question"], self.q["duration"], media)
@@ -287,7 +288,8 @@ class Session:
 connections = {}
 sessions = [Session()]
 
-print(f"file:///C:/Users/fabif/Documents/GitHub/Intramo/IntramoClient/index.html?id={sessions[0].code}&name=Host")
+print(
+    f"file:///C:/Users/fabif/Documents/GitHub/Intramo/IntramoClient/index.html?id={sessions[0].code}&name=Host")
 
 
 async def handler(websocket, path):
@@ -356,10 +358,12 @@ async def handler(websocket, path):
                 if s.q["type"].lower() == "truefalse":
                     p.isRight = (s.q["isRight"] and btn == "Y") or (
                         not s.q["isRight"] and btn == "N")
-                
+
                 if s.q["type"].lower() == "text":
-                    p.isRight = len([option for option in s.q["correct"] if option.lower() == answer.lower()]) >= 1
-                    if not p.isRight: s.wrongAnswers.append(answer)
+                    p.isRight = len(
+                        [option for option in s.q["correct"] if option.lower() == answer.lower()]) >= 1
+                    if not p.isRight:
+                        s.wrongAnswers.append(answer)
 
                 for pl in s.players:
                     if pl.isHost:
