@@ -3,6 +3,15 @@
         {
             "type": "truefalse",
             "media":{
+                "yt": "https://www.youtube.com/watch?v=Rk1MYMPDx3s"
+            },
+            "question": "Ist dieses Video gut?",
+            "duration": 42,
+            "isRight": true
+        },
+        {
+            "type": "truefalse",
+            "media":{
                 "img": "https://images-cdn.kahoot.it/c0530715-4ab2-4fa2-8bf2-7abd55d2317f?auto=webp"
             },
             "question": "Darth Vader sagte: 'Luke, ich bin dein Vater'.",
