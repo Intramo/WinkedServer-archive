@@ -1,6 +1,12 @@
 {
     "questions": [
         {
+            "type": "text",
+            "question": "Was ist der Spitzname von Tom Cruise im Film 'Top Gun'?",
+            "correct": ["Maverick", "Pete"],
+            "duration": 20
+        },
+        {
             "type": "truefalse",
             "media":{
                 "yt": "https://www.youtube.com/watch?v=Rk1MYMPDx3s"
