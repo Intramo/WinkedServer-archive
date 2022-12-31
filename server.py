@@ -3,7 +3,8 @@ import websockets
 import json
 import random
 import os
-
+import ssl
+import pathlib
 
 class SendPacket:
     async def error(p, msg: str) -> None:
@@ -157,7 +158,16 @@ class SendPacket:
             "correct": correct,
             "wrong": wrong
         }))
-
+    
+    async def hostPodium(p, p1name:str, p1points:int, p2name:str, p2points:int, p3name:str, p3points:int) -> None:
+        await p.socket.send(json.dumps({
+            "p1name": p1name,
+            "p1points": p1points,
+            "p2name": p2name,
+            "p2points": p2points,
+            "p3name": p3name,
+            "p3points": p3points
+        }))
 
 class Player:
     def __init__(self, s, name, host) -> None:
@@ -187,7 +197,31 @@ class Session:
             self.currentQuestionNum += 1
         if self.currentQuestionNum >= len(self.questions):
             for p in self.players:
-                await SendPacket.waiting(p)
+                if p.isHost:
+                    p1name = ""
+                    p1points = 0
+                    p2name = ""
+                    p2points = 0
+                    p3name = ""
+                    p3points = 0
+
+                    sort = list(sorted(self.players, key = lambda e: e.points))
+
+                    if(len(sort) >= 1):
+                        p1name = sort[0].name
+                        p1points = sort[0].points
+                    
+                    if(len(sort) >= 2):
+                        p2name = sort[1].name
+                        p2points = sort[1].points
+                    
+                    if(len(sort) >= 3):
+                        p3name = sort[2].name
+                        p3points = sort[02].points
+
+                    await SendPacket.hostPodium(p, p1name, p1points, p2name, p2points, p3name, p3points)
+                else:
+                    await SendPacket.waiting(p)
             return
 
         self.q: dict = self.questions[self.currentQuestionNum]
@@ -371,7 +405,30 @@ async def handler(websocket, path):
     finally:
         del connections[websocket]
 
-start_server = websockets.serve(handler, "localhost", 4348)
 
-asyncio.get_event_loop().run_until_complete(start_server)
-asyncio.get_event_loop().run_forever()
+
+
+
+
+key = RSA.generate(2048)
+pv_key_string = key.exportKey()
+with open ("private.pem", "w") as prv_file:
+    print("{}".format(pv_key_string.decode()), file=prv_file)
+
+pb_key_string = key.publickey().exportKey()
+with open ("public.pem", "w") as pub_file:
+    print("{}".format(pb_key_string.decode()), file=pub_file)
+
+
+
+
+ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+localhost_pem = pathlib.Path(__file__).with_name("key.pem")
+ssl_context.load_cert_chain(localhost_pem)
+
+async def main():
+    async with websockets.serve(handler, "localhost", 4348, ssl=ssl_context):
+        await asyncio.Future()  # run forever
+
+if __name__ == "__main__":
+    asyncio.run(main())
