@@ -161,6 +161,8 @@ class SendPacket:
     
     async def hostPodium(p, p1name:str, p1points:int, p2name:str, p2points:int, p3name:str, p3points:int) -> None:
         await p.socket.send(json.dumps({
+            "packettype": "gameState",
+            "gameState": "hostPodium",
             "p1name": p1name,
             "p1points": p1points,
             "p2name": p2name,
