@@ -326,8 +326,7 @@ class Session:
 connections = {}
 sessions = [Session()]
 
-print(
-    f"file:///C:/Users/fabif/Documents/GitHub/Intramo/IntramoClient/index.html?id={sessions[0].code}&name=Host")
+print(sessions[0].code)
 
 
 async def handler(websocket, path):
