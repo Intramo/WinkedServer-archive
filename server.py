@@ -20,11 +20,14 @@ class SendPacket:
     async def addAnswerCount(p) -> None:
         await p.socket.send(json.dumps({"packettype": "addAnswerCount"}))
 
-    async def hostLobby(p, gameid: str) -> None:
+    async def hostLobby(p, gameid: str, preloadImageURLS: list) -> None:
         await p.socket.send(json.dumps({
             "packettype": "gameState",
             "gameState": "hostLobby",
-            "gameid": gameid
+            "gameid": gameid,
+            "preload": {
+                "images": preloadImageURLS
+            }
         }))
 
     async def playerAnswerNormal(p, name: str, buttonA: bool, buttonB: bool, buttonC: bool, buttonD: bool, points: int, progress: str) -> None:
@@ -349,12 +352,12 @@ async def handler(websocket, path):
                         if name.lower() in [n.name.lower() for n in [s for s in sessions if s.code == sessionCode][0].players]:
                             await websocket.send(json.dumps({"packettype": "error", "message": "Dieser Name wird bereits genutzt"}))
                         else:
-                            s = [s for s in sessions if s.code == sessionCode][0]
-                            pl = Player(websocket, name, len(s.players) == 0)
+                            s:Session = [s for s in sessions if s.code == sessionCode][0]
+                            pl:Player = Player(websocket, name, len(s.players) == 0)
                             s.players.append(pl)
 
                             if pl.isHost:
-                                await SendPacket.hostLobby(pl, s.code)
+                                await SendPacket.hostLobby(pl, s.code, [question["media"]["img"] for question in s.questions if question.get("media", {}).get("img", None) != None])
                             if not pl.isHost:
                                 await SendPacket.waiting(pl)
                                 for p in s.players:
