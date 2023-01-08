@@ -331,8 +331,6 @@ class Session:
 connections = {}
 sessions = []
 
-print(sessions[0].code)
-
 async def testQuiz(q:str):
     try:
         q = json.loads(q)
