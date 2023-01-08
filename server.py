@@ -337,12 +337,12 @@ async def testQuiz(q:str):
         a = q["questions"][0]
         for b in q["questions"]:
             if b["type"] == "text":
-                a = b["question"].split("")
+                a = b["question"].split(" ")
                 a = b["correct"][0]
                 a = b["duration"] + 1
                 a = b["media"].keys()
             if b["type"] == "truefalse":
-                a = b["question"].split("")
+                a = b["question"].split(" ")
                 a = not b["isRight"]
                 a = b["duration"] + 1
                 a = b["media"].keys()
