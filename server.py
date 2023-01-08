@@ -303,7 +303,7 @@ class Session:
             for p in self.players:
                 if not p.isHost:
                     if p.isRight:
-                        additionalpoints = (time.time() - self.qt - p.socket.latency / self.q["duration"]) * 1000
+                        additionalpoints = ((time.time() - self.qt - 0.2) / 20) * 1000
                         p.points += additionalpoints
                         p.answerStreak += 1
                         await SendPacket.playerResultCorrect(p, p.answerStreak, additionalpoints)
