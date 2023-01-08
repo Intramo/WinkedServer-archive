@@ -347,7 +347,7 @@ async def testQuiz(q:str):
                 a = b["duration"] + 1
                 a = b["media"].keys()
             if b["type"] == "normal":
-                a = b["question"].split("")
+                a = b["question"].split(" ")
                 a = b["media"].keys()
                 a = b["duration"] + 1
 
