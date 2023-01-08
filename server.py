@@ -193,9 +193,6 @@ class Session:
         self.code = "".join([str(random.randint(0, 9)) for i in range(7)])
         self.players: list[Player] = []
 
-        with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), "quizes/starwars.json"), "r") as f:
-            self.questions = json.load(f)["questions"]
-
         self.currentQuestionNum = 0
         self.currentQuestionState = -1
 
@@ -332,10 +329,35 @@ class Session:
 
 
 connections = {}
-sessions = [Session()]
+sessions = []
 
 print(sessions[0].code)
 
+async def testQuiz(q:str):
+    try:
+        q = json.loads(q)
+        a = q["questions"][0]
+        for b in q["questions"]:
+            if b["type"] == "text":
+                a = b["question"].split("")
+                a = b["correct"][0]
+                a = b["duration"] + 1
+                a = b["media"].keys()
+            if b["type"] == "truefalse":
+                a = b["question"].split("")
+                a = not b["isRight"]
+                a = b["duration"] + 1
+                a = b["media"].keys()
+            if b["type"] == "normal":
+                a = b["question"].split("")
+                a = b["media"].keys()
+                a = b["duration"] + 1
+
+        return True
+    except Exception as e:
+        return str(e)
+
+    
 
 async def handler(websocket, path):
     connections[websocket] = False
@@ -358,16 +380,12 @@ async def handler(websocket, path):
                             await websocket.send(json.dumps({"packettype": "error", "message": "Dieser Name wird bereits genutzt"}))
                         else:
                             s:Session = [s for s in sessions if s.code == sessionCode][0]
-                            pl:Player = Player(websocket, name, len(s.players) == 0)
+                            pl:Player = Player(websocket, name, False)
                             s.players.append(pl)
-
-                            if pl.isHost:
-                                await SendPacket.hostLobby(pl, s.code, [question["media"]["img"] for question in s.questions if question.get("media", {}).get("img", None) != None])
-                            if not pl.isHost:
-                                await SendPacket.waiting(pl)
-                                for p in s.players:
-                                    if p.isHost:
-                                        await SendPacket.lobbyJoin(p, pl.name)
+                            await SendPacket.waiting(pl)
+                            for p in s.players:
+                                if p.isHost:
+                                    await SendPacket.lobbyJoin(p, pl.name)
 
                 await websocket.ping()
 
@@ -414,6 +432,18 @@ async def handler(websocket, path):
                 for pl in s.players:
                     if pl.isHost:
                         await SendPacket.addAnswerCount(pl)
+    
+            if packettype.lower() == "hostrequest":
+                result = await testQuiz(msg["quiz"])
+                if(result == True):
+                    s:Session = Session()
+                    s.questions = json.load(msg["quiz"])["questions"]
+                    sessions.append(s)
+                    pl:Player = Player(websocket, "Host", True)
+                    s.players.append(pl)
+                    await SendPacket.hostLobby(pl, s.code, [question["media"]["img"] for question in s.questions if question.get("media", {}).get("img", None) != None])
+                else:
+                    await websocket.send(json.dumps({"packettype": "error", "message": "Ungültiges Quiz: " + str(result)}))
     finally:
         del connections[websocket]
 
