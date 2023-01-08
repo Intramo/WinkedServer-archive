@@ -211,7 +211,7 @@ class Session:
                     p3name = ""
                     p3points = 0
 
-                    sort = list(sorted(self.players, key=lambda e: e.points, reverse = True))
+                    sort = list(sorted([p for p in self.players if not p.isHost], key=lambda e: e.points, reverse = True))
 
                     if (len(sort) >= 1):
                         p1name = sort[0].name
@@ -435,7 +435,7 @@ async def handler(websocket, path):
                 result = await testQuiz(msg["quiz"])
                 if(result == True):
                     s:Session = Session()
-                    s.questions = json.load(msg["quiz"])["questions"]
+                    s.questions = json.loads(msg["quiz"])["questions"]
                     sessions.append(s)
                     pl:Player = Player(websocket, "Host", True)
                     s.players.append(pl)
