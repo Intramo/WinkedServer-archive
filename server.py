@@ -70,7 +70,7 @@ class SendPacket:
             "gameState": "playerResultWrong"
         }))
 
-    async def playerResultCorrect(p, answerstreak: int, points:int) -> None:
+    async def playerResultCorrect(p, answerstreak: int, points: int) -> None:
         await p.socket.send(json.dumps({
             "packettype": "gameState",
             "gameState": "playerResultCorrect",
@@ -193,7 +193,8 @@ class Session:
         doesCodeExist = True
         while doesCodeExist:
             self.code = "".join([str(random.randint(0, 9)) for i in range(7)])
-            doesCodeExist = len([s.code for s in sessions if s.code == self.code]) > 0
+            doesCodeExist = len(
+                [s.code for s in sessions if s.code == self.code]) > 0
 
         self.players: list[Player] = []
 
@@ -215,7 +216,8 @@ class Session:
                     p3name = ""
                     p3points = 0
 
-                    sort = list(sorted([p for p in self.players if not p.isHost], key=lambda e: e.points, reverse = True))
+                    sort = list(sorted(
+                        [p for p in self.players if not p.isHost], key=lambda e: e.points, reverse=True))
 
                     if (len(sort) >= 1):
                         p1name = sort[0].name
@@ -264,7 +266,7 @@ class Session:
 
             for p in self.players:
                 self.qt: float = time.time()
-                
+
                 if self.q["type"].lower() == "normal":
                     if p.isHost:
                         await SendPacket.hostAnswersNormal(
@@ -305,7 +307,8 @@ class Session:
             for p in self.players:
                 if not p.isHost:
                     if p.isRight:
-                        additionalpoints = int((1 - ((time.time() - self.qt + (p.socket.latency * 2)) / self.q["duration"])) * (1000 + 20 * (p.answerStreak - 1)))
+                        additionalpoints = int((1 - ((time.time() - self.qt + (
+                            p.socket.latency * 2)) / self.q["duration"])) * (1000 + 20 * (p.answerStreak - 1)))
                         p.points += additionalpoints
                         p.answerStreak += 1
                         await SendPacket.playerResultCorrect(p, p.answerStreak, additionalpoints)
@@ -331,9 +334,11 @@ class Session:
                         await SendPacket.hostResultsText(p, self.q["question"], self.q["correct"], self.wrongAnswers)
             return
 
+
 sessions = []
 
-async def testQuiz(q:str):
+
+async def testQuiz(q: str):
     try:
         q = json.loads(q)
         a = q["questions"][0]
@@ -357,7 +362,6 @@ async def testQuiz(q:str):
     except Exception as e:
         return str(e)
 
-    
 
 async def handler(websocket, path):
     try:
@@ -378,8 +382,9 @@ async def handler(websocket, path):
                         if name.lower() in [n.name.lower() for n in [s for s in sessions if s.code == sessionCode][0].players]:
                             await websocket.send(json.dumps({"packettype": "error", "message": "Dieser Name wird bereits genutzt"}))
                         else:
-                            s:Session = [s for s in sessions if s.code == sessionCode][0]
-                            pl:Player = Player(websocket, name, False)
+                            s: Session = [
+                                s for s in sessions if s.code == sessionCode][0]
+                            pl: Player = Player(websocket, name, False)
                             s.players.append(pl)
                             await SendPacket.waiting(pl)
                             for p in s.players:
@@ -389,7 +394,8 @@ async def handler(websocket, path):
                 await websocket.ping()
 
             if packettype.lower() == "next":
-                s = [s for s in sessions if True in [p.socket == websocket for p in s.players]][0]
+                s = [s for s in sessions if True in [
+                    p.socket == websocket for p in s.players]][0]
                 p = [p for p in s.players if p.socket == websocket][0]
                 if p.isHost:
                     await s.next()
@@ -431,29 +437,31 @@ async def handler(websocket, path):
                 for pl in s.players:
                     if pl.isHost:
                         await SendPacket.addAnswerCount(pl)
-    
+
             if packettype.lower() == "hostrequest":
                 result = await testQuiz(msg["quiz"])
-                if(result == True):
-                    s:Session = Session()
+                if (result == True):
+                    s: Session = Session()
                     s.questions = json.loads(msg["quiz"])["questions"]
                     sessions.append(s)
-                    pl:Player = Player(websocket, "Host", True)
+                    pl: Player = Player(websocket, "Host", True)
                     s.players.append(pl)
                     await SendPacket.hostLobby(pl, s.code, [question["media"]["img"] for question in s.questions if question.get("media", {}).get("img", None) != None])
                 else:
                     await websocket.send(json.dumps({"packettype": "error", "message": "Ungültiges Quiz: " + str(result)}))
     finally:
-        s = [s for s in sessions if True in [p.socket == websocket for p in s.players]][0]
+        s = [s for s in sessions if True in [
+            p.socket == websocket for p in s.players]][0]
         p = [p for p in s.players if p.socket == websocket][0]
         s.players.remove(p)
-        if(len(s.players) == 0):
+        if (len(s.players) == 0):
             sessions.remove(s)
             print("Deleted session " + s.code)
 
 ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
 localhost_pem = pathlib.Path(__file__).with_name("cert.pem")
 ssl_context.load_cert_chain(localhost_pem)
+
 
 async def main():
     async with websockets.serve(handler, "0.0.0.0", 4348, ssl=ssl_context):
