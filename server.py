@@ -234,7 +234,6 @@ class Session:
             return
 
         self.q: dict = self.questions[self.currentQuestionNum]
-        self.qt: float = time.time()
 
         if self.currentQuestionState == 0:
             self.amountA = 0
@@ -263,6 +262,8 @@ class Session:
                     media = f"""<iframe width="560" height="315" src="https://www.youtube.com/embed/{mediasrc.split('?v=')[1]}?controls=0&autoplay=1&modestbranding=1&disablekb=1&rel=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>"""
 
             for p in self.players:
+                self.qt: float = time.time()
+                
                 if self.q["type"].lower() == "normal":
                     if p.isHost:
                         await SendPacket.hostAnswersNormal(
@@ -303,7 +304,7 @@ class Session:
             for p in self.players:
                 if not p.isHost:
                     if p.isRight:
-                        additionalpoints = ((time.time() - self.qt - 0.2) / 20) * 1000
+                        additionalpoints = int(((time.time() - self.qt - p.socket.latency) / 20) * 1000)
                         p.points += additionalpoints
                         p.answerStreak += 1
                         await SendPacket.playerResultCorrect(p, p.answerStreak, additionalpoints)
