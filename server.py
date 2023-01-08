@@ -5,6 +5,7 @@ import random
 import os
 import ssl
 import pathlib
+import time
 
 
 class SendPacket:
@@ -69,10 +70,11 @@ class SendPacket:
             "gameState": "playerResultWrong"
         }))
 
-    async def playerResultCorrect(p, answerstreak: int) -> None:
+    async def playerResultCorrect(p, answerstreak: int, points:int) -> None:
         await p.socket.send(json.dumps({
             "packettype": "gameState",
             "gameState": "playerResultCorrect",
+            "points": points,
             "answerstreak": answerstreak
         }))
 
@@ -212,7 +214,7 @@ class Session:
                     p3name = ""
                     p3points = 0
 
-                    sort = list(sorted(self.players, key=lambda e: e.points))
+                    sort = list(sorted(self.players, key=lambda e: e.points, reverse = True))
 
                     if (len(sort) >= 1):
                         p1name = sort[0].name
@@ -232,6 +234,7 @@ class Session:
             return
 
         self.q: dict = self.questions[self.currentQuestionNum]
+        self.qt: float = time.time()
 
         if self.currentQuestionState == 0:
             self.amountA = 0
@@ -300,9 +303,10 @@ class Session:
             for p in self.players:
                 if not p.isHost:
                     if p.isRight:
-                        p.points += 1000
+                        additionalpoints = (time.time() - self.qt - p.socket.latency / self.q["duration"]) * 1000
+                        p.points += additionalpoints
                         p.answerStreak += 1
-                        await SendPacket.playerResultCorrect(p, p.answerStreak)
+                        await SendPacket.playerResultCorrect(p, p.answerStreak, additionalpoints)
                     else:
                         p.answerStreak = 0
                         await SendPacket.playerResultWrong(p)
@@ -364,9 +368,10 @@ async def handler(websocket, path):
                                     if p.isHost:
                                         await SendPacket.lobbyJoin(p, pl.name)
 
+                await websocket.ping()
+
             if packettype.lower() == "next":
-                s = [s for s in sessions if True in [
-                    p.socket == websocket for p in s.players]][0]
+                s = [s for s in sessions if True in [p.socket == websocket for p in s.players]][0]
                 p = [p for p in s.players if p.socket == websocket][0]
                 if p.isHost:
                     await s.next()
