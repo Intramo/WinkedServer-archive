@@ -190,7 +190,11 @@ class Player:
 
 class Session:
     def __init__(self) -> None:
-        self.code = "".join([str(random.randint(0, 9)) for i in range(7)])
+        doesCodeExist = True
+        while doesCodeExist:
+            self.code = "".join([str(random.randint(0, 9)) for i in range(7)])
+            doesCodeExist = len([s.code for s in sessions if s.code == self.code]) > 0
+
         self.players: list[Player] = []
 
         self.currentQuestionNum = 0
@@ -327,8 +331,6 @@ class Session:
                         await SendPacket.hostResultsText(p, self.q["question"], self.q["correct"], self.wrongAnswers)
             return
 
-
-connections = {}
 sessions = []
 
 async def testQuiz(q:str):
@@ -358,7 +360,6 @@ async def testQuiz(q:str):
     
 
 async def handler(websocket, path):
-    connections[websocket] = False
     try:
         async for message in websocket:
             msg = json.loads(message)
@@ -443,13 +444,16 @@ async def handler(websocket, path):
                 else:
                     await websocket.send(json.dumps({"packettype": "error", "message": "Ungültiges Quiz: " + str(result)}))
     finally:
-        del connections[websocket]
-
+        s = [s for s in sessions if True in [p.socket == websocket for p in s.players]][0]
+        p = [p for p in s.players if p.socket == websocket][0]
+        s.players.remove(p)
+        if(len(s.players) == 0):
+            sessions.remove(s)
+            print("Deleted session " + s.code)
 
 ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
 localhost_pem = pathlib.Path(__file__).with_name("cert.pem")
 ssl_context.load_cert_chain(localhost_pem)
-
 
 async def main():
     async with websockets.serve(handler, "0.0.0.0", 4348, ssl=ssl_context):
