@@ -388,7 +388,7 @@ async def handler(websocket, path):
                     else:
                         if name.lower() in [n.name.lower() for n in [s for s in sessions if s.code == sessionCode][0].players]:
                             await websocket.send(json.dumps({"packettype": "error", "message": "Dieser Name wird bereits genutzt"}))
-                        elif checkName(name):
+                        elif await checkName(name):
                             await websocket.send(json.dumps({"packettype": "error", "message": "Dieser Name verstößt gegen den Inhaltsfilter"}))
                         else:
                             s: Session = [
