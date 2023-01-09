@@ -364,11 +364,14 @@ async def testQuiz(q: str):
     except Exception as e:
         return str(e)
 
-async def checkName(name:str)->bool:
+async def checkName(name:str)->str:
     for n in blacklist:
-        if n.lower() in name.lower().split(" "):
-            return True
-    return False
+        for wordnum, word in enumerate(name.split(" ")):
+            if n.lower() == word.lower():
+                newWord = name.split(" ")
+                newWord[wordnum] = newWord[wordnum][0] + "*" * len(newWord[wordnum][1:])
+                return " ".join(newWord).strip()
+    return name
 
 async def handler(websocket, path):
     try:
@@ -386,10 +389,9 @@ async def handler(websocket, path):
                     if len(name) < 3:
                         await websocket.send(json.dumps({"packettype": "error", "message": "Ungültiger Name. Mindestens 3 Zeichen"}))
                     else:
+                        name = await checkName(name)
                         if name.lower() in [n.name.lower() for n in [s for s in sessions if s.code == sessionCode][0].players]:
                             await websocket.send(json.dumps({"packettype": "error", "message": "Dieser Name wird bereits genutzt"}))
-                        elif await checkName(name):
-                            await websocket.send(json.dumps({"packettype": "error", "message": "Dieser Name verstößt gegen den Inhaltsfilter"}))
                         else:
                             s: Session = [
                                 s for s in sessions if s.code == sessionCode][0]
