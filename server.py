@@ -7,6 +7,8 @@ import ssl
 import pathlib
 import time
 
+with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), "profanity.blacklist"), "r") as f:
+    blacklist:list = f.read().split("\n")
 
 class SendPacket:
     async def error(p, msg: str) -> None:
@@ -363,11 +365,10 @@ async def testQuiz(q: str):
         return str(e)
 
 async def checkName(name:str)->bool:
-    blacklist:list = ["paimon"]
     for n in blacklist:
         if n.lower() in name.lower():
             return True
-     return False
+    return False
 
 async def handler(websocket, path):
     try:
@@ -387,7 +388,7 @@ async def handler(websocket, path):
                     else:
                         if name.lower() in [n.name.lower() for n in [s for s in sessions if s.code == sessionCode][0].players]:
                             await websocket.send(json.dumps({"packettype": "error", "message": "Dieser Name wird bereits genutzt"}))
-                        else if checkName(name):
+                        elif checkName(name):
                             await websocket.send(json.dumps({"packettype": "error", "message": "Dieser Name verstößt gegen den Inhaltsfilter"}))
                         else:
                             s: Session = [
