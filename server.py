@@ -459,13 +459,14 @@ async def handler(websocket, path):
                 else:
                     await websocket.send(json.dumps({"packettype": "error", "message": "Ungültiges Quiz: " + str(result)}))
     finally:
-        s = [s for s in sessions if True in [
-            p.socket == websocket for p in s.players]][0]
-        p = [p for p in s.players if p.socket == websocket][0]
-        s.players.remove(p)
-        if (len(s.players) == 0):
-            sessions.remove(s)
-            print("Deleted session " + s.code)
+        s = [s for s in sessions if True in [p.socket == websocket for p in s.players]]
+        if len(s) > 0:
+            s = s[0]
+            p = [p for p in s.players if p.socket == websocket][0]
+            s.players.remove(p)
+            if (len(s.players) == 0):
+                sessions.remove(s)
+                print("Deleted session " + s.code)
 
 ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
 localhost_pem = pathlib.Path(__file__).with_name("cert.pem")
