@@ -362,6 +362,12 @@ async def testQuiz(q: str):
     except Exception as e:
         return str(e)
 
+async def checkName(name:str)->bool:
+    blacklist:list = ["paimon"]
+    for n in blacklist:
+        if n.lower() in name.lower():
+            return False
+     return True
 
 async def handler(websocket, path):
     try:
