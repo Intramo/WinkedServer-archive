@@ -366,8 +366,8 @@ async def checkName(name:str)->bool:
     blacklist:list = ["paimon"]
     for n in blacklist:
         if n.lower() in name.lower():
-            return False
-     return True
+            return True
+     return False
 
 async def handler(websocket, path):
     try:
@@ -387,6 +387,8 @@ async def handler(websocket, path):
                     else:
                         if name.lower() in [n.name.lower() for n in [s for s in sessions if s.code == sessionCode][0].players]:
                             await websocket.send(json.dumps({"packettype": "error", "message": "Dieser Name wird bereits genutzt"}))
+                        else if checkName(name):
+                            await websocket.send(json.dumps({"packettype": "error", "message": "Dieser Name verstößt gegen den Inhaltsfilter"}))
                         else:
                             s: Session = [
                                 s for s in sessions if s.code == sessionCode][0]
