@@ -454,6 +454,32 @@ async def handler(websocket, path):
                 if (result == True):
                     s: Session = Session()
                     s.questions = json.loads(msg["quiz"])["questions"]
+
+                    if(msg["randomizeQuestions"]):
+                        random.shuffle(s.questions)
+                    
+                    if(msg["randomizeQuestions"]):
+                        for qn, q in enumerate(s.questions):
+                            if q["type"].lower() == "normal".lower():
+                                options = []
+                                if q.get("A", None) != None:
+                                    options.append(q["A"])
+                                    del q["A"]
+                                if q.get("B", None) != None:
+                                    options.append(q["B"])
+                                    del q["B"]
+                                if q.get("C", None) != None:
+                                    options.append(q["C"])
+                                    del q["C"]
+                                if q.get("D", None) != None:
+                                    options.append(q["D"])
+                                    del q["D"]
+
+                                letters = ["A", "B", "C", "D"]
+                                random.shuffle(letters)
+                                for i in range(len(options)):
+                                    q[letters[i]] = options[i]
+
                     sessions.append(s)
                     pl: Player = Player(websocket, "Host", True)
                     s.players.append(pl)
@@ -473,7 +499,6 @@ async def handler(websocket, path):
 ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
 localhost_pem = pathlib.Path(__file__).with_name("cert.pem")
 ssl_context.load_cert_chain(localhost_pem)
-
 
 async def main():
     async with websockets.serve(handler, "0.0.0.0", 4348, ssl=ssl_context):
