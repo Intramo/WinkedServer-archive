@@ -366,7 +366,7 @@ async def testQuiz(q: str):
 
 async def checkName(name:str)->bool:
     for n in blacklist:
-        if n.lower() in name.lower():
+        if n.lower() in name.lower().split(" "):
             return True
     return False
 
