@@ -362,14 +362,12 @@ class Session:
                     additionalpoints = int((1 - ((time.time() - self.qt + (p.socket.latency * 2)) / self.q["duration"])) * (1000 + 20 * (p.answerStreak - 1)))
                     p.answerStreak += 1
                     if p.rightAmount > 0:
-                        p.points += additionalpoints * (p.rightAmount /(self.q.get("A", {"correct": False})["correct"] + self.q.get("B", {"correct": False})["correct"] + self.q.get("C", {"correct": False})["correct"] + self.q.get("D", {"correct": False})["correct"]))
+                        total = self.q.get("A", {"correct": False})["correct"] + self.q.get("B", {"correct": False})["correct"] + self.q.get("C", {"correct": False})["correct"] + self.q.get("D", {"correct": False})["correct"]
+                        p.points += additionalpoints * int(p.rightAmount / total)
+                        await SendPacket.playerResultCorrectSelect(p, p.answerStreak, additionalpoints, str(p.rightAmount) + " von " + str(total) + " richtig beantwortet")
                     elif p.isRight:
                         p.points += additionalpoints
-                        if self.q["type"].lower() == "select":
-                            total = self.q.get("A", {"correct": False})["correct"] + self.q.get("B", {"correct": False})["correct"] + self.q.get("C", {"correct": False})["correct"] + self.q.get("D", {"correct": False})["correct"]
-                            await SendPacket.playerResultCorrectSelect(p, p.answerStreak, additionalpoints, str(p.rightAmount) + " von " + str(total) + " richtig beantwortet")
-                        else:
-                            await SendPacket.playerResultCorrect(p, p.answerStreak, additionalpoints)
+                        await SendPacket.playerResultCorrect(p, p.answerStreak, additionalpoints)
                     else:
                         p.answerStreak = 0
                         await SendPacket.playerResultWrong(p)
