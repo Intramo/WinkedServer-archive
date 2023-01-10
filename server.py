@@ -490,10 +490,9 @@ async def handler(websocket, path):
 
                 if s.q["type"].lower() == "normal":
                     p.isRight = s.q[btn]["correct"]
-
                 if s.q["type"].lower() == "select":
-                    p.rightAmount = (s.q.get("A", False) and btns["A"]) + (s.q.get("B", False) and btns["B"]) + (
-                        s.q.get("C", False) and btns["C"]) + (s.q.get("D", False) and btns["D"])
+                    g = lambda b: s.q.get(b, {"correct": False})["correct"]
+                    p.rightAmount = (g("A") and btns["A"]) + (g("B") and btns["B"]) + (g("C") and btns["C"]) + (g("D") and btns["D"])
 
                 if s.q["type"].lower() == "truefalse":
                     p.isRight = (s.q["isRight"] and btn == "Y") or (
