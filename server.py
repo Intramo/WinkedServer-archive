@@ -8,7 +8,7 @@ import pathlib
 import time
 
 with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), "profanity.blacklist"), "r") as f:
-    blacklist:list = f.read().split("\n")
+    blacklist: list = f.read().split("\n")
 
 class SendPacket:
     async def error(p, msg: str) -> None:
@@ -47,7 +47,7 @@ class SendPacket:
             "points": points,
             "progress": progress
         }))
-    
+
     async def playerAnswerSelect(p, name: str, buttonA: bool, buttonB: bool, buttonC: bool, buttonD: bool, points: int, progress: str) -> None:
         await p.socket.send(json.dumps({
             "packettype": "gameState",
@@ -94,8 +94,8 @@ class SendPacket:
             "points": points,
             "answerstreak": answerstreak
         }))
-    
-    async def playerResultCorrectSelect(p, answerstreak: int, points: int, correctamount:str) -> None:
+
+    async def playerResultCorrectSelect(p, answerstreak: int, points: int, correctamount: str) -> None:
         await p.socket.send(json.dumps({
             "packettype": "gameState",
             "gameState": "playerResultCorrectSelect",
@@ -203,7 +203,6 @@ class SendPacket:
             "p3points": p3points
         }))
 
-
 class Player:
     def __init__(self, s, name, host) -> None:
         self.socket = s
@@ -212,8 +211,7 @@ class Player:
         self.points: int = 0
         self.isHost: bool = host
         self.isRight: bool = False
-        self.rightAmount:int = 0
-
+        self.rightAmount: int = 0
 
 class Session:
     def __init__(self) -> None:
@@ -318,7 +316,7 @@ class Session:
                             p.points,
                             f"{self.currentQuestionNum} von {len(self.questions)}"
                         )
-                
+
                 if self.q["type"].lower() == "normal":
                     if p.isHost:
                         await SendPacket.hostAnswersNormal(
@@ -342,7 +340,7 @@ class Session:
                             p.points,
                             f"{self.currentQuestionNum} von {len(self.questions)}"
                         )
-                
+
                 if self.q["type"].lower() == "truefalse":
                     if p.isHost:
                         await SendPacket.hostAnswersTrueFalse(p, self.q["question"], self.q["duration"], media)
@@ -359,11 +357,14 @@ class Session:
         if self.currentQuestionState == 2:
             for p in self.players:
                 if not p.isHost:
-                    additionalpoints = int((1 - ((time.time() - self.qt + (p.socket.latency * 2)) / self.q["duration"])) * (1000 + 20 * (p.answerStreak - 1)))
+                    additionalpoints = int((1 - ((time.time() - self.qt + (
+                        p.socket.latency * 2)) / self.q["duration"])) * (1000 + 20 * (p.answerStreak - 1)))
                     p.answerStreak += 1
                     if p.rightAmount > 0:
-                        total = self.q.get("A", {"correct": False})["correct"] + self.q.get("B", {"correct": False})["correct"] + self.q.get("C", {"correct": False})["correct"] + self.q.get("D", {"correct": False})["correct"]
-                        p.points += additionalpoints * int(p.rightAmount / total)
+                        total = self.q.get("A", {"correct": False})["correct"] + self.q.get("B", {"correct": False})[
+                            "correct"] + self.q.get("C", {"correct": False})["correct"] + self.q.get("D", {"correct": False})["correct"]
+                        p.points += additionalpoints * \
+                            int(p.rightAmount / total)
                         await SendPacket.playerResultCorrectSelect(p, p.answerStreak, additionalpoints, str(p.rightAmount) + " von " + str(total) + " richtig beantwortet")
                     elif p.isRight:
                         p.points += additionalpoints
@@ -416,12 +417,13 @@ async def testQuiz(q: str):
     except Exception as e:
         return str(e)
 
-async def checkName(name:str)->str:
+async def checkName(name: str) -> str:
     for n in blacklist:
         for wordnum, word in enumerate(name.split(" ")):
             if n.lower() == word.lower():
                 newWord = name.split(" ")
-                newWord[wordnum] = newWord[wordnum][0] + "*" * len(newWord[wordnum][1:])
+                newWord[wordnum] = newWord[wordnum][0] + \
+                    "*" * len(newWord[wordnum][1:])
                 return " ".join(newWord).strip()
     return name
 
@@ -470,7 +472,8 @@ async def handler(websocket, path):
 
                 btn = msg.get("button", "")
                 answer = msg.get("text", "")
-                btns = msg.get("buttons", {"A": False, "B": False, "C": False, "D": False})
+                btns = msg.get(
+                    "buttons", {"A": False, "B": False, "C": False, "D": False})
 
                 if btn == "A" or btns["A"]:
                     s.amountA += 1
@@ -487,9 +490,10 @@ async def handler(websocket, path):
 
                 if s.q["type"].lower() == "normal":
                     p.isRight = s.q[btn]["correct"]
-                
+
                 if s.q["type"].lower() == "select":
-                    p.rightAmount = (s.q.get("A", False) and btns["A"]) + (s.q.get("B", False) and btns["B"]) + (s.q.get("C", False) and btns["C"]) + (s.q.get("D", False) and btns["D"])
+                    p.rightAmount = (s.q.get("A", False) and btns["A"]) + (s.q.get("B", False) and btns["B"]) + (
+                        s.q.get("C", False) and btns["C"]) + (s.q.get("D", False) and btns["D"])
 
                 if s.q["type"].lower() == "truefalse":
                     p.isRight = (s.q["isRight"] and btn == "Y") or (
@@ -511,10 +515,10 @@ async def handler(websocket, path):
                     s: Session = Session()
                     s.questions = json.loads(msg["quiz"])["questions"]
 
-                    if(msg["randomizeQuestions"]):
+                    if (msg["randomizeQuestions"]):
                         random.shuffle(s.questions)
-                    
-                    if(msg["randomizeQuestions"]):
+
+                    if (msg["randomizeQuestions"]):
                         for qn, q in enumerate(s.questions):
                             if q["type"].lower() == "normal".lower():
                                 options = []
@@ -543,7 +547,8 @@ async def handler(websocket, path):
                 else:
                     await websocket.send(json.dumps({"packettype": "error", "message": "Ungültiges Quiz: " + str(result)}))
     finally:
-        s = [s for s in sessions if True in [p.socket == websocket for p in s.players]]
+        s = [s for s in sessions if True in [
+            p.socket == websocket for p in s.players]]
         if len(s) > 0:
             s = s[0]
             p = [p for p in s.players if p.socket == websocket][0]
