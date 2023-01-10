@@ -47,6 +47,21 @@ class SendPacket:
             "points": points,
             "progress": progress
         }))
+    
+    async def playerAnswerSelect(p, name: str, buttonA: bool, buttonB: bool, buttonC: bool, buttonD: bool, points: int, progress: str) -> None:
+        await p.socket.send(json.dumps({
+            "packettype": "gameState",
+            "gameState": "playerAnswerSelect",
+            "name": name,
+            "buttons": {
+                "A": buttonA,
+                "B": buttonB,
+                "C": buttonC,
+                "D": buttonD
+            },
+            "points": points,
+            "progress": progress
+        }))
 
     async def playerAnswerTrueFalse(p, name: str, points: int, progress: str) -> None:
         await p.socket.send(json.dumps({
@@ -78,6 +93,15 @@ class SendPacket:
             "gameState": "playerResultCorrect",
             "points": points,
             "answerstreak": answerstreak
+        }))
+    
+    async def playerResultCorrectSelect(p, answerstreak: int, points: int, correctamount:str) -> None:
+        await p.socket.send(json.dumps({
+            "packettype": "gameState",
+            "gameState": "playerResultCorrectSelect",
+            "points": points,
+            "answerstreak": answerstreak,
+            "correctamount": correctamount
         }))
 
     async def hostQuestion(p, question: str) -> None:
@@ -188,6 +212,7 @@ class Player:
         self.points: int = 0
         self.isHost: bool = host
         self.isRight: bool = False
+        self.rightAmount:int = 0
 
 
 class Session:
@@ -251,6 +276,7 @@ class Session:
             for p in self.players:
                 p.isRight = False
                 p.answer = None
+                p.rightAmount = 0
                 if p.isHost:
                     await SendPacket.hostQuestion(p, self.q["question"])
             return
@@ -269,6 +295,30 @@ class Session:
             for p in self.players:
                 self.qt: float = time.time()
 
+                if self.q["type"].lower() == "select":
+                    if p.isHost:
+                        await SendPacket.hostAnswersNormal(
+                            p,
+                            self.q["question"],
+                            self.q["duration"],
+                            self.q["A"]["text"] if "A" in self.q.keys() else "",
+                            self.q["B"]["text"] if "B" in self.q.keys() else "",
+                            self.q["C"]["text"] if "C" in self.q.keys() else "",
+                            self.q["D"]["text"] if "D" in self.q.keys() else "",
+                            media
+                        )
+                    else:
+                        await SendPacket.playerAnswerSelect(
+                            p,
+                            p.name,
+                            "A" in self.q.keys(),
+                            "B" in self.q.keys(),
+                            "C" in self.q.keys(),
+                            "D" in self.q.keys(),
+                            p.points,
+                            f"{self.currentQuestionNum} von {len(self.questions)}"
+                        )
+                
                 if self.q["type"].lower() == "normal":
                     if p.isHost:
                         await SendPacket.hostAnswersNormal(
@@ -288,10 +338,11 @@ class Session:
                             "A" in self.q.keys(),
                             "B" in self.q.keys(),
                             "C" in self.q.keys(),
-                            "D" in self.q .keys(),
+                            "D" in self.q.keys(),
                             p.points,
                             f"{self.currentQuestionNum} von {len(self.questions)}"
                         )
+                
                 if self.q["type"].lower() == "truefalse":
                     if p.isHost:
                         await SendPacket.hostAnswersTrueFalse(p, self.q["question"], self.q["duration"], media)
@@ -308,17 +359,22 @@ class Session:
         if self.currentQuestionState == 2:
             for p in self.players:
                 if not p.isHost:
-                    if p.isRight:
-                        additionalpoints = int((1 - ((time.time() - self.qt + (
-                            p.socket.latency * 2)) / self.q["duration"])) * (1000 + 20 * (p.answerStreak - 1)))
+                    additionalpoints = int((1 - ((time.time() - self.qt + (p.socket.latency * 2)) / self.q["duration"])) * (1000 + 20 * (p.answerStreak - 1)))
+                    p.answerStreak += 1
+                    if p.rightAmount > 0:
+                        p.points += additionalpoints * (p.rightAmount / (self.q.get("A", False) + self.q.get("B", False) + self.q.get("C", False) + self.q.get("D", False)))
+                    elif p.isRight:
                         p.points += additionalpoints
-                        p.answerStreak += 1
-                        await SendPacket.playerResultCorrect(p, p.answerStreak, additionalpoints)
+                        if self.q["type"].lower() == "select":
+                            total = self.q.get("A", False) + self.q.get("B", False) + self.q.get("C", False) + self.q.get("D", False)
+                            await SendPacket.playerResultCorrectSelect(p, p.answerStreak, additionalpoints, str(p.rightAmount) + " von " + str(total) + " richtig beantwortet")
+                        else:
+                            await SendPacket.playerResultCorrect(p, p.answerStreak, additionalpoints)
                     else:
                         p.answerStreak = 0
                         await SendPacket.playerResultWrong(p)
                 else:
-                    if self.q["type"].lower() == "normal":
+                    if self.q["type"].lower() == "normal" or self.q["type"].lower() == "select":
                         await SendPacket.hostResultsNormal(
                             p, self.q["question"],
                             "A" in self.q.keys(), self.q["A"]["text"] if "A" in self.q.keys(
@@ -336,9 +392,7 @@ class Session:
                         await SendPacket.hostResultsText(p, self.q["question"], self.q["correct"], self.wrongAnswers)
             return
 
-
 sessions = []
-
 
 async def testQuiz(q: str):
     try:
@@ -418,14 +472,15 @@ async def handler(websocket, path):
 
                 btn = msg.get("button", "")
                 answer = msg.get("text", "")
+                btns = msg.get("buttons", {"A": False, "B": False, "C": False, "D": False})
 
-                if btn == "A":
+                if btn == "A" or btns["A"]:
                     s.amountA += 1
-                if btn == "B":
+                if btn == "B" or btns["B"]:
                     s.amountB += 1
-                if btn == "C":
+                if btn == "C" or btns["C"]:
                     s.amountC += 1
-                if btn == "D":
+                if btn == "D" or btns["D"]:
                     s.amountD += 1
                 if btn == "Y":
                     s.amountY += 1
@@ -434,6 +489,9 @@ async def handler(websocket, path):
 
                 if s.q["type"].lower() == "normal":
                     p.isRight = s.q[btn]["correct"]
+                
+                if s.q["type"].lower() == "select":
+                    p.rightAmount = (s.q.get("A", False) and btns["A"]) + (s.q.get("B", False) and btns["B"]) + (s.q.get("C", False) and btns["C"]) + (s.q.get("D", False) and btns["D"])
 
                 if s.q["type"].lower() == "truefalse":
                     p.isRight = (s.q["isRight"] and btn == "Y") or (
@@ -443,7 +501,7 @@ async def handler(websocket, path):
                     p.isRight = len(
                         [option for option in s.q["correct"] if option.lower() == answer.lower()]) >= 1
                     if not p.isRight:
-                        s.wrongAnswers.append(answer)
+                        s.wrongAnswers.append(await checkName(answer))
 
                 for pl in s.players:
                     if pl.isHost:

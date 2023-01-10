@@ -1,6 +1,26 @@
 {
     "questions": [
         {
+            "type": "select",
+            "media":{
+                "img": "https://images-cdn.kahoot.it/cdc3e926-5281-4a95-a8e3-24572209144c?auto=webp"
+            },
+            "question": "A & B",
+            "duration": 10,
+            "A": {
+                "text": "A",
+                "correct": true
+            },
+            "B": {
+                "text": "B",
+                "correct": true
+            },
+            "D": {
+                "text": "D",
+                "correct": false
+            }
+        },
+        {
             "type": "text",
             "question": "Was ist der Spitzname von Tom Cruise im Film 'Top Gun'?",
             "correct": ["Maverick", "Pete"],
