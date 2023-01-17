@@ -1,0 +1,167 @@
+{
+    "questions": [
+        {
+            "type": "normal",
+            "media":{
+                "img": "https://www.handelsblatt.com/images/coca-cola-flaschen/26307438/2-formatOriginal.jpg"
+            },
+            "question": "Was ist der Hauptbestandteil von Coca-Cola?",
+            "duration": 20,
+            "A": {
+                "text": "Limette",
+                "correct": false
+            },
+            "B": {
+                "text": "Maissirup mit hohem Fruktosegehalt",
+                "correct": false
+            },
+            "C": {
+                "text": "Koffein",
+                "correct": false
+            },
+            "D": {
+                "text": "Kohlensäurehaltiges Wasser",
+                "correct": true
+            }
+        },
+        {
+            "type": "normal",
+            "media":{
+                "img": "https://static.mueller.de/6486593869-PV-0/pdmain/ass-altenburger-spielkarten-skat-franzoesisches-bild-leinenpraegung.jpg"
+            },
+            "question": "Dieser äußerst erfolgreiche Videospielentwickler und -verlag begann als Spielkartenunternehmen.",
+            "duration": 20,
+            "A": {
+                "text": "Electronic Arts",
+                "correct": false
+            },
+            "B": {
+                "text": "Square Enix",
+                "correct": false
+            },
+            "C": {
+                "text": "Nintendo",
+                "correct": true
+            },
+            "D": {
+                "text": "Mojang",
+                "correct": false
+            }
+        },
+        {
+            "type": "normal",
+            "media":{
+                "img": "https://etailment.de/news/media/6/Aktien-handel-brse-51217-detailp.jpeg"
+            },
+            "question": "Welches dieser Unternehmen gehört nicht zu den Big 4?",
+            "duration": 10,
+            "A": {
+                "text": "Sony",
+                "correct": true
+            },
+            "B": {
+                "text": "Apple",
+                "correct": false
+            },
+            "C": {
+                "text": "Henkel",
+                "correct": true
+            },
+            "D": {
+                "text": "Amazon",
+                "correct": false
+            }
+        },
+        {
+            "type": "normal",
+            "media":{
+                "img": "https://m.media-amazon.com/images/S/aplus-media/vc/01d4c166-a7e5-4460-9fcd-7512324dccb7.__CR0,2,970,600_PT0_SX970_V1___.png"
+            },
+            "question": "Woher kommt Nestle?",
+            "duration": 20,
+            "A": {
+                "text": "Schweiz",
+                "correct": true
+            },
+            "B": {
+                "text": "Schweden",
+                "correct": false
+            },
+            "C": {
+                "text": "Italien",
+                "correct": false
+            },
+            "D": {
+                "text": "Frankreich",
+                "correct": false
+            }
+        },
+        {
+            "type": "normal",
+            "media":{
+                "img": "https://images-cdn.kahoot.it/45092d34-14d2-4c66-a102-2b3c78cc4711?auto=webp"
+            },
+            "question": "Welcher Automarke ist dieses Auto zuzuordnen?",
+            "duration": 20,
+            "A": {
+                "text": "VW",
+                "correct": false
+            },
+            "B": {
+                "text": "Mazda",
+                "correct": false
+            },
+            "C": {
+                "text": "Fiat",
+                "correct": false
+            },
+            "D": {
+                "text": "Renault",
+                "correct": true
+            }
+        },
+        {
+            "type": "text",
+            "question": "Wann ist die Titanic gesunken? (Ganze Jahreszahl)",
+            "correct": ["1912"],
+            "duration": 30,
+            "media": {
+                "img": "https://www1.wdr.de/radio/wdr5/sendungen/zeitzeichen/zeitzeichen-untergang-titantic-100~_v-fullhd.jpg"
+            }
+        },
+        {
+            "type": "text",
+            "question": "Wie lautet die Ordnungszahl von Helium im Periodensystem?",
+            "correct": ["2", "Zwei"],
+            "duration": 30,
+            "media": {
+                "img": "https://www.jokora.de/media/image/78/f8/9b/periodensystem-transparent.png"
+            }
+        },
+        {
+            "type": "select",
+            "media":{
+                "img": "https://images-cdn.kahoot.it/cdc3e926-5281-4a95-a8e3-24572209144c?auto=webp"
+            },
+            "question": "Alle vorhandenen Schularten auswählen",
+            "duration": 10,
+            "A": {
+                "text": "Gymnasium",
+                "correct": true
+            },
+            "B": {
+                "text": "Waldorfschule",
+                "correct": true
+            },
+            "C": {
+                "text": "Montessorischule",
+                "correct": true
+            },
+            "D": {
+                "text": "Förderschule",
+                "correct": true
+            }
+        }
+    ]
+}
+
