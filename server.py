@@ -6,6 +6,7 @@ import os
 import ssl
 import pathlib
 import time
+import math
 
 with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), "profanity.blacklist"), "r") as f:
     blacklist: list = f.read().split("\n")
@@ -290,9 +291,9 @@ class Session:
                 if mediatype == "yt":
                     media = f"""<iframe width="560" height="315" src="https://www.youtube.com/embed/{mediasrc.split('?v=')[1]}?controls=0&autoplay=1&modestbranding=1&disablekb=1&rel=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>"""
 
-            for p in self.players:
-                self.qt: float = time.time()
+            self.qt: float = time.time()
 
+            for p in self.players:
                 if self.q["type"].lower() == "select":
                     if p.isHost:
                         await SendPacket.hostAnswersNormal(
@@ -357,8 +358,12 @@ class Session:
         if self.currentQuestionState == 2:
             for p in self.players:
                 if not p.isHost:
-                    additionalpoints = int((1 - ((time.time() - self.qt + (
-                        p.socket.latency * 2)) / self.q["duration"])) * (1000 + 20 * (p.answerStreak - 1)))
+                    additionalpoints = int(
+                        (1-(
+                            (abs(p.answerTimestamp - self.qt) - p.socket.latency * 2) / self.q["duration"]
+                        )) * (1000 + 50 * (p.answerStreak - 1))
+                    )
+
                     p.answerStreak += 1
                     if p.rightAmount > 0:
                         total = self.q.get("A", {"correct": False})["correct"] + self.q.get("B", {"correct": False})[
@@ -472,8 +477,7 @@ async def handler(websocket, path):
 
                 btn = msg.get("button", "")
                 answer = msg.get("text", "")
-                btns = msg.get(
-                    "buttons", {"A": False, "B": False, "C": False, "D": False})
+                btns = msg.get("buttons", {"A": False, "B": False, "C": False, "D": False})
 
                 if btn == "A" or btns["A"]:
                     s.amountA += 1
@@ -504,6 +508,8 @@ async def handler(websocket, path):
                         [option for option in s.q["correct"] if option.lower() == answer.lower()]) >= 1
                     if not p.isRight:
                         s.wrongAnswers.append(await checkName(answer))
+                
+                p.answerTimestamp =  time.time()
 
                 for pl in s.players:
                     if pl.isHost:
