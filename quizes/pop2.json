@@ -1,0 +1,167 @@
+{
+    "questions": [
+        {
+            "type": "normal",
+            "media":{
+                "img": "https://www.handelsblatt.com/images/coca-cola-flaschen/26307438/2-formatOriginal.jpg"
+            },
+            "question": "What is the main ingredient in Coca-Cola?",
+            "duration": 20,
+            "A": {
+                "text": "Lime",
+                "correct": false
+            },
+            "B": {
+                "text": "High fructose corn syrup",
+                "correct": false
+            },
+            "C": {
+                "text": "Caffeine",
+                "correct": false
+            },
+            "D": {
+                "text": "Carbonated water",
+                "correct": true
+            }
+        },
+        {
+            "type": "normal",
+            "media":{
+                "img": "https://static.mueller.de/6486593869-PV-0/pdmain/ass-altenburger-spielkarten-skat-franzoesisches-bild-leinenpraegung.jpg"
+            },
+            "question": "This highly successful video game developer and publisher began as a playing card company.",
+            "duration": 20,
+            "A": {
+                "text": "Electronic Arts",
+                "correct": false
+            },
+            "B": {
+                "text": "Square Enix",
+                "correct": false
+            },
+            "C": {
+                "text": "Nintendo",
+                "correct": true
+            },
+            "D": {
+                "text": "Mojang",
+                "correct": false
+            }
+        },
+        {
+            "type": "normal",
+            "media":{
+                "img": "https://etailment.de/news/media/6/Aktien-handel-brse-51217-detailp.jpeg"
+            },
+            "question": "Which of these companies is not one of the Big 4?",
+            "duration": 10,
+            "A": {
+                "text": "Sony",
+                "correct": true
+            },
+            "B": {
+                "text": "Apple",
+                "correct": false
+            },
+            "C": {
+                "text": "Henkel",
+                "correct": true
+            },
+            "D": {
+                "text": "Amazon",
+                "correct": false
+            }
+        },
+        {
+            "type": "normal",
+            "media":{
+                "img": "https://m.media-amazon.com/images/S/aplus-media/vc/01d4c166-a7e5-4460-9fcd-7512324dccb7.__CR0,2,970,600_PT0_SX970_V1___.png"
+            },
+            "question": "Where does Nestle come from?",
+            "duration": 20,
+            "A": {
+                "text": "Switzerland",
+                "correct": true
+            },
+            "B": {
+                "text": "Sweden",
+                "correct": false
+            },
+            "C": {
+                "text": "Italy",
+                "correct": false
+            },
+            "D": {
+                "text": "France",
+                "correct": false
+            }
+        },
+        {
+            "type": "normal",
+            "media":{
+                "img": "https://images-cdn.kahoot.it/45092d34-14d2-4c66-a102-2b3c78cc4711?auto=webp"
+            },
+            "question": "What make of car is this?",
+            "duration": 20,
+            "A": {
+                "text": "VW",
+                "correct": false
+            },
+            "B": {
+                "text": "Mazda",
+                "correct": false
+            },
+            "C": {
+                "text": "Fiat",
+                "correct": false
+            },
+            "D": {
+                "text": "Renault",
+                "correct": true
+            }
+        },
+        {
+            "type": "text",
+            "question": "When did the Titanic sink? (Whole year)",
+            "correct": ["1912"],
+            "duration": 30,
+            "media": {
+                "img": "https://www1.wdr.de/radio/wdr5/sendungen/zeitzeichen/zeitzeichen-untergang-titantic-100~_v-fullhd.jpg"
+            }
+        },
+        {
+            "type": "text",
+            "question": "What is the atomic number of helium in the periodic table?",
+            "correct": ["2", "two"],
+            "duration": 30,
+            "media": {
+                "img": "https://www.jokora.de/media/image/78/f8/9b/periodensystem-transparent.png"
+            }
+        },
+        {
+            "type": "select",
+            "media":{
+                "img": "https://images-cdn.kahoot.it/cdc3e926-5281-4a95-a8e3-24572209144c?auto=webp"
+            },
+            "question": "Select all existing school types",
+            "duration": 10,
+            "A": {
+                "text": "High school",
+                "correct": true
+            },
+            "B": {
+                "text": "Waldorf School",
+                "correct": true
+            },
+            "C": {
+                "text": "Montessori School",
+                "correct": true
+            },
+            "D": {
+                "text": "Special school",
+                "correct": true
+            }
+        }
+    ]
+}
+
