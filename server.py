@@ -12,8 +12,8 @@ with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), "profanity.bl
     blacklist: list = f.read().split("\n")
 
 class SendPacket:
-    async def error(p, msg: str) -> None:
-        await p.socket.send(json.dumps({"packettype": "error", "message": msg}))
+    async def error(websocket, key:str) -> None:
+        await websocket.send(json.dumps({"packettype": "error", "key": key}))
 
     async def waiting(p) -> None:
         await p.socket.send(json.dumps({"packettype": "gameState", "gameState": "waiting"}))
@@ -443,14 +443,18 @@ async def handler(websocket, path):
                 name = msg["name"].strip()
 
                 if not True in [s.code == sessionCode for s in sessions]:
-                    await websocket.send(json.dumps({"packettype": "error", "message": "Ungültiger Sitzungscode"}))
+                    await SendPacket.error("error.id.exist")
+
                 else:
                     if len(name) < 3:
-                        await websocket.send(json.dumps({"packettype": "error", "message": "Ungültiger Name. Mindestens 3 Zeichen"}))
+                         await SendPacket.error("error.name.tooshort")
+                    if len(name) > 16:
+                         await SendPacket.error("error.name.toolong")
                     else:
                         name = await checkName(name)
                         if name.lower() in [n.name.lower() for n in [s for s in sessions if s.code == sessionCode][0].players]:
-                            await websocket.send(json.dumps({"packettype": "error", "message": "Dieser Name wird bereits genutzt"}))
+                            await SendPacket.error("error.name.exist")
+                            
                         else:
                             s: Session = [
                                 s for s in sessions if s.code == sessionCode][0]
