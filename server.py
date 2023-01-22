@@ -317,7 +317,7 @@ class Session:
                             "C" in self.q.keys(),
                             "D" in self.q.keys(),
                             p.points,
-                            f"{self.currentQuestionNum} von {len(self.questions)}"
+                            f"{self.currentQuestionNum + 1} von {len(self.questions)}"
                         )
 
                 if self.q["type"].lower() == "normal":
@@ -341,20 +341,20 @@ class Session:
                             "C" in self.q.keys(),
                             "D" in self.q.keys(),
                             p.points,
-                            f"{self.currentQuestionNum} von {len(self.questions)}"
+                            f"{self.currentQuestionNum + 1} von {len(self.questions)}"
                         )
 
                 if self.q["type"].lower() == "truefalse":
                     if p.isHost:
                         await SendPacket.hostAnswersTrueFalse(p, self.q["question"], self.q["duration"], media)
                     else:
-                        await SendPacket.playerAnswerTrueFalse(p, p.name, p.points, f"{self.currentQuestionNum} von {len(self.questions)}")
+                        await SendPacket.playerAnswerTrueFalse(p, p.name, p.points, f"{self.currentQuestionNum + 1} von {len(self.questions)}")
 
                 if self.q["type"].lower() == "text":
                     if p.isHost:
                         await SendPacket.hostAnswersText(p, self.q["question"], self.q["duration"], media)
                     else:
-                        await SendPacket.playerAnswerText(p, p.name, p.points, f"{self.currentQuestionNum} von {len(self.questions)}")
+                        await SendPacket.playerAnswerText(p, p.name, p.points, f"{self.currentQuestionNum + 1} von {len(self.questions)}")
             return
 
         if self.currentQuestionState == 2:
