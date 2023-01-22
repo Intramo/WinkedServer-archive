@@ -105,10 +105,12 @@ class SendPacket:
             "correctamount": correctamount
         }))
 
-    async def hostQuestion(p, question: str) -> None:
+    async def hostQuestion(p, question: str, progress:str, type:str) -> None:
         await p.socket.send(json.dumps({
             "packettype": "gameState",
             "gameState": "hostQuestion",
+            "progress": progress,
+            "type": type,
             "question": question
         }))
 
@@ -277,7 +279,7 @@ class Session:
                 p.answer = None
                 p.rightAmount = 0
                 if p.isHost:
-                    await SendPacket.hostQuestion(p, self.q["question"])
+                    await SendPacket.hostQuestion(p, self.q["question"], f"{self.currentQuestionNum + 1} von {len(self.questions)}", self.q["type"])
             return
 
         if self.currentQuestionState == 1:
@@ -443,18 +445,18 @@ async def handler(websocket, path):
                 name = msg["name"].strip()
 
                 if not True in [s.code == sessionCode for s in sessions]:
-                    await SendPacket.error("error.id.exist")
+                    await SendPacket.error(websocket, "error.id.exist")
 
                 else:
                     if len(name) < 3:
-                         await SendPacket.error("error.name.tooshort")
+                         await SendPacket.error(websocket, "error.name.tooshort")
                     if len(name) > 16:
-                         await SendPacket.error("error.name.toolong")
+                         await SendPacket.error(websocket, "error.name.toolong")
                     else:
                         name = await checkName(name)
                         if name.lower() in [n.name.lower() for n in [s for s in sessions if s.code == sessionCode][0].players]:
-                            await SendPacket.error("error.name.exist")
-                            
+                            await SendPacket.error(websocket, "error.name.exist")
+
                         else:
                             s: Session = [
                                 s for s in sessions if s.code == sessionCode][0]
