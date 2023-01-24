@@ -280,11 +280,13 @@ class Session:
                 p.rightAmount = 0
                 if p.isHost:
                     await SendPacket.hostQuestion(p, self.q["question"], f"{self.currentQuestionNum + 1} von {len(self.questions)}", self.q["type"])
+                else:
+                    await SendPacket.waiting(p)
             return
 
         if self.currentQuestionState == 1:
             hasmedia = self.q.get("media", {}) != {}
-            media = f"<h1>{self.q['question']}</h1>"
+            media = ""
             if hasmedia:
                 mediatype = list(self.q["media"].keys())[0]
                 mediasrc = self.q["media"][mediatype]
