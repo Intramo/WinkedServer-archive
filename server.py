@@ -6,7 +6,7 @@ import os
 import ssl
 import pathlib
 import time
-import math
+import urllib.parse
 
 with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), "profanity.blacklist"), "r") as f:
     blacklist: list = f.read().split("\n")
@@ -24,13 +24,14 @@ class SendPacket:
     async def addAnswerCount(p) -> None:
         await p.socket.send(json.dumps({"packettype": "addAnswerCount"}))
 
-    async def hostLobby(p, gameid: str, preloadImageURLS: list) -> None:
+    async def hostLobby(p, gameid: str, preloadImageURLS: list, preloadAudio: list) -> None:
         await p.socket.send(json.dumps({
             "packettype": "gameState",
             "gameState": "hostLobby",
             "gameid": gameid,
             "preload": {
-                "images": preloadImageURLS
+                "images": preloadImageURLS,
+                "audio": preloadAudio
             }
         }))
 
@@ -296,7 +297,9 @@ class Session:
                 if mediatype == "yt":
                     media = f"""<iframe width="560" height="315" src="https://www.youtube.com/embed/{mediasrc.split('?v=')[1]}?controls=0&autoplay=1&modestbranding=1&disablekb=1&rel=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>"""
                 if mediatype == "ytaudio":
-                    media = f"""<iframe style="opacity:0%" width="560" height="315" src="https://www.youtube.com/embed/{mediasrc.split('?v=')[1]}?controls=0&autoplay=1&modestbranding=1&disablekb=1&rel=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>"""
+                    media = f"""<iframe style="opacity:1%" width="560" height="315" src="https://www.youtube.com/embed/{mediasrc.split('?v=')[1]}?controls=0&autoplay=1&modestbranding=1&disablekb=1&rel=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>"""
+                if mediatype == "audio":
+                    media = f"""<audio src="{mediasrc}" controls autoplay></audio>"""
 
             self.qt: float = time.time()
 
@@ -568,7 +571,10 @@ async def handler(websocket, path):
                     sessions.append(s)
                     pl: Player = Player(websocket, "Host", True)
                     s.players.append(pl)
-                    await SendPacket.hostLobby(pl, s.code, [question["media"]["img"] for question in s.questions if question.get("media", {}).get("img", None) != None])
+                    await SendPacket.hostLobby(pl, s.code,
+                        [question["media"]["img"] for question in s.questions if question.get("media", {}).get("img", None) != None],
+                        [question["media"]["audio"] for question in s.questions if question.get("media", {}).get("audio", None) != None],
+                    )
                 else:
                     await websocket.send(json.dumps({"packettype": "error", "message": "Ungültiges Quiz: " + str(result)}))
     finally:
