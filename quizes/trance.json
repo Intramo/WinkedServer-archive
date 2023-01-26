@@ -81,32 +81,10 @@
             },
             "C": {
                 "text": "Punk Trance",
-                "correct": true
+                "correct": false
             },
             "D": {
                 "text": "Megatrance",
-                "correct": false
-            }
-        },
-        {
-            "type": "select",
-            "media":{},
-            "question": "Wähle alle richtigen Aussagen über Balearic-Trance aus",
-            "duration": 30,
-            "A": {
-                "text": "Betonung jedes Viertels durch eine Bassdrum",
-                "correct": true
-            },
-            "B": {
-                "text": "Monotone Wiederholung der Harmoniefolgen",
-                "correct": true
-            },
-            "C": {
-                "text": "Bezug zur Harmonik ",
-                "correct": true
-            },
-            "D": {
-                "text": "Nur Dur-Grundtonarten",
                 "correct": false
             }
         },
