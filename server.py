@@ -278,6 +278,7 @@ class Session:
                 p.isRight = False
                 p.answer = None
                 p.rightAmount = 0
+                p.answerTimestamp = 0
                 if p.isHost:
                     await SendPacket.hostQuestion(p, self.q["question"], f"{self.currentQuestionNum + 1} von {len(self.questions)}", self.q["type"])
                 else:
@@ -470,13 +471,21 @@ async def handler(websocket, path):
                                     await SendPacket.lobbyJoin(p, pl.name)
 
                 await websocket.ping()
-
+            
             if packettype.lower() == "next":
                 s = [s for s in sessions if True in [
                     p.socket == websocket for p in s.players]][0]
                 p = [p for p in s.players if p.socket == websocket][0]
                 if p.isHost:
                     await s.next()
+
+            if packettype.lower() == "kickplayer":
+                s = [s for s in sessions if True in [
+                    p.socket == websocket for p in s.players]][0]
+                p = [p for p in s.players if p.socket == websocket][0]
+                if p.isHost:
+                    k = [k for k in s.players if k.name.lower() == msg.get("name", "").lower()]
+                    await k[0].socket.close()
 
             if packettype.lower() == "answer":
                 s = [s for s in sessions if True in [
@@ -517,7 +526,7 @@ async def handler(websocket, path):
                     if not p.isRight:
                         s.wrongAnswers.append(await checkName(answer))
                 
-                p.answerTimestamp =  time.time()
+                p.answerTimestamp = time.time()
 
                 for pl in s.players:
                     if pl.isHost:
