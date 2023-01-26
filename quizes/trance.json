@@ -4,7 +4,7 @@
             "type": "normal",
             "media":{},
             "question": "In welchem Bereich erstreckt sich das Tempo eines Liedes?",
-            "duration": 10,
+            "duration": 20,
             "A": {
                 "text": "125 bis 150 BPM",
                 "correct": true
@@ -26,7 +26,7 @@
             "type": "normal",
             "media":{},
             "question": "Welches Subgenre hatte mitte der 90er besonderen Erfolg?",
-            "duration": 10,
+            "duration": 20,
             "A": {
                 "text": "Dutch Trance",
                 "correct": true
@@ -48,7 +48,7 @@
             "type": "select",
             "media":{},
             "question": "Wähle alle richtigen Aussagen aus",
-            "duration": 30,
+            "duration": 40,
             "A": {
                 "text": "Betonung jedes Viertels durch eine Bassdrum",
                 "correct": true
@@ -58,7 +58,7 @@
                 "correct": true
             },
             "C": {
-                "text": "Bezug zur Harmonik ",
+                "text": "Bezug zur Harmonik",
                 "correct": true
             },
             "D": {
@@ -99,14 +99,14 @@
             "type": "text",
             "question": "Durch monotone Wiederholung der Harmoniefolgen entstehen...",
             "correct": ["Klangsphären", "Klangteppiche"],
-            "duration": 30,
+            "duration": 40,
             "media": {}
         },
         {
             "type": "text",
             "question": "Welches Instrument wird primär genutzt?",
             "correct": ["Synthesizer"],
-            "duration": 30,
+            "duration": 40,
             "media": {}
         },
         {
@@ -115,7 +115,7 @@
                 "audio": "https://cdn.discordapp.com/attachments/1068209611506729182/1068209712832716921/fable.mp3"
             },
             "question": "Wie heißt dieses Lied?",
-            "duration": 20,
+            "duration": 30,
             "A": {
                 "text": "Fable",
                 "correct": true
@@ -139,7 +139,7 @@
                 "audio": "https://cdn.discordapp.com/attachments/1068209611506729182/1068215545813540965/godjs.mp3"
             },
             "question": "Wie heißt dieses Lied?",
-            "duration": 20,
+            "duration": 30,
             "A": {
                 "text": "God Is a DJ",
                 "correct": true
@@ -163,7 +163,7 @@
                 "audio": "https://cdn.discordapp.com/attachments/1068209611506729182/1068249401551765504/wearealive.mp3"
             },
             "question": "Wie heißt dieses Lied?",
-            "duration": 20,
+            "duration": 30,
             "A": {
                 "text": "History",
                 "correct": false
