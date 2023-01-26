@@ -1,0 +1,108 @@
+{
+    "questions": [
+        {
+            "type": "normal",
+            "media":{},
+            "question": "In welchem Bereich erstreckt sich das Tempo eines Liedes?",
+            "duration": 10,
+            "A": {
+                "text": "125 bis 150 BPM",
+                "correct": true
+            },
+            "B": {
+                "text": "100 bis 120 BPM",
+                "correct": false
+            },
+            "C": {
+                "text": "150 bis 170 BPM",
+                "correct": false
+            },
+            "D": {
+                "text": "135 - 160 BPM",
+                "correct": false
+            }
+        },
+        {
+            "type": "normal",
+            "media":{},
+            "question": "Welches Subgenre hatte mitte der 90er besonderen Erfolg?",
+            "duration": 10,
+            "A": {
+                "text": "Dutch Trance",
+                "correct": true
+            },
+            "B": {
+                "text": "Acid Trance",
+                "correct": false
+            },
+            "C": {
+                "text": "Dream Trance",
+                "correct": false
+            },
+            "D": {
+                "text": "Keines der aufgeführten",
+                "correct": false
+            }
+        },
+        {
+            "type": "select",
+            "media":{},
+            "question": "Wähle alle richtigen Aussagen aus",
+            "duration": 30,
+            "A": {
+                "text": "Betonung jedes Viertels durch eine Bassdrum",
+                "correct": true
+            },
+            "B": {
+                "text": "Monotone Wiederholung der Harmoniefolgen",
+                "correct": true
+            },
+            "C": {
+                "text": "Bezug zur Harmonik ",
+                "correct": true
+            },
+            "D": {
+                "text": "Nur Dur-Grundtonarten",
+                "correct": false
+            }
+        },
+        {
+            "type": "truefalse",
+            "media":{},
+            "question": "Im Gegensatz zu Acid House und Techno ist Trance viel melodischer",
+            "duration": 20,
+            "isRight": true
+        },
+        {
+            "type": "text",
+            "question": "Durch monotone Wiederholung der Harmoniefolgen entstehen...",
+            "correct": ["Klangsphären", "Klangteppiche"],
+            "duration": 30,
+            "media": {}
+        },
+        {
+            "type": "normal",
+            "media":{
+                "ytaudio": "https://www.youtube.com/watch?v=5A9OIIapSko&t=80s"
+            },
+            "question": "Wie heißt dieses Lied?",
+            "duration": 20,
+            "A": {
+                "text": "9Pm",
+                "correct": true
+            },
+            "B": {
+                "text": "Don't Stop",
+                "correct": false
+            },
+            "C": {
+                "text": "Greece 2000",
+                "correct": false
+            },
+            "D": {
+                "text": "My Dream",
+                "correct": false
+            }
+        }
+    ]
+}
