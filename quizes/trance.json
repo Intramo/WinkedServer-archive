@@ -67,6 +67,28 @@
             }
         },
         {
+            "type": "select",
+            "media":{},
+            "question": "Wähle alle existierenden Subgenres aus",
+            "duration": 30,
+            "A": {
+                "text": "Progressive Trance",
+                "correct": true
+            },
+            "B": {
+                "text": "Psytrance",
+                "correct": true
+            },
+            "C": {
+                "text": "Punk Trance",
+                "correct": true
+            },
+            "D": {
+                "text": "Megatrance",
+                "correct": false
+            }
+        },
+        {
             "type": "truefalse",
             "media":{},
             "question": "Im Gegensatz zu Acid House und Techno ist Trance viel melodischer",
@@ -81,14 +103,21 @@
             "media": {}
         },
         {
+            "type": "text",
+            "question": "Welches Instrument wird primär genutzt?",
+            "correct": ["Synthesizer"],
+            "duration": 30,
+            "media": {}
+        },
+        {
             "type": "normal",
             "media":{
-                "ytaudio": "https://www.youtube.com/watch?v=5A9OIIapSko&t=80s"
+                "audio": "https://cdn.discordapp.com/attachments/1068209611506729182/1068209712832716921/fable.mp3"
             },
             "question": "Wie heißt dieses Lied?",
             "duration": 20,
             "A": {
-                "text": "9Pm",
+                "text": "Fable",
                 "correct": true
             },
             "B": {
@@ -96,11 +125,35 @@
                 "correct": false
             },
             "C": {
-                "text": "Greece 2000",
+                "text": "9PM",
                 "correct": false
             },
             "D": {
-                "text": "My Dream",
+                "text": "We are alive",
+                "correct": false
+            }
+        },
+        {
+            "type": "normal",
+            "media":{
+                "audio": "https://cdn.discordapp.com/attachments/1068209611506729182/1068215545813540965/godjs.mp3"
+            },
+            "question": "Wie heißt dieses Lied?",
+            "duration": 20,
+            "A": {
+                "text": "God Is a DJ",
+                "correct": true
+            },
+            "B": {
+                "text": "Shivers",
+                "correct": false
+            },
+            "C": {
+                "text": "Insomnia",
+                "correct": false
+            },
+            "D": {
+                "text": "We are alive",
                 "correct": false
             }
         }
