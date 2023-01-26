@@ -89,6 +89,28 @@
             }
         },
         {
+            "type": "select",
+            "media":{},
+            "question": "Wähle alle richtigen Aussagen über Balearic-Trance aus",
+            "duration": 30,
+            "A": {
+                "text": "Betonung jedes Viertels durch eine Bassdrum",
+                "correct": true
+            },
+            "B": {
+                "text": "Monotone Wiederholung der Harmoniefolgen",
+                "correct": true
+            },
+            "C": {
+                "text": "Bezug zur Harmonik ",
+                "correct": true
+            },
+            "D": {
+                "text": "Nur Dur-Grundtonarten",
+                "correct": false
+            }
+        },
+        {
             "type": "truefalse",
             "media":{},
             "question": "Im Gegensatz zu Acid House und Techno ist Trance viel melodischer",
@@ -129,7 +151,7 @@
                 "correct": false
             },
             "D": {
-                "text": "We are alive",
+                "text": "We Are Alive",
                 "correct": false
             }
         },
@@ -153,8 +175,32 @@
                 "correct": false
             },
             "D": {
-                "text": "We are alive",
+                "text": "All By Myself",
                 "correct": false
+            }
+        },
+        {
+            "type": "normal",
+            "media":{
+                "audio": "https://cdn.discordapp.com/attachments/1068209611506729182/1068249401551765504/wearealive.mp3"
+            },
+            "question": "Wie heißt dieses Lied?",
+            "duration": 20,
+            "A": {
+                "text": "History",
+                "correct": false
+            },
+            "B": {
+                "text": "Believe",
+                "correct": false
+            },
+            "C": {
+                "text": "Set My Mind Free",
+                "correct": false
+            },
+            "D": {
+                "text": "We Are Alive",
+                "correct": true
             }
         }
     ]
