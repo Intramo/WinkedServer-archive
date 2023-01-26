@@ -548,7 +548,7 @@ async def handler(websocket, path):
 
                     if (msg["randomizeQuestions"]):
                         for qn, q in enumerate(s.questions):
-                            if q["type"].lower() == "normal".lower():
+                            if q["type"].lower() == "normal".lower() or q["type"].lower() == "select".lower():
                                 options = []
                                 if q.get("A", None) != None:
                                     options.append(q["A"])
