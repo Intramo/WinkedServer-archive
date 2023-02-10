@@ -1,1 +1,22 @@
+{"questions": [
 
+{
+"type": "",
+"media": {},
+"question": "In welcher Epoche war die Neue Deutsche Welle?",
+"duration": 20,
+"A": {
+    "text": "60er",
+    "correct": false
+}, "B": {
+    "text": "70er",
+    "correct": false
+}, "C": {
+    "text": "80er",
+    "correct": true
+}, "D": {
+    "text": "90er",
+    "correct": false
+}}
+
+]}
