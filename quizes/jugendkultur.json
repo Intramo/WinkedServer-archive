@@ -1,10 +1,10 @@
 {"questions": [
 
 {
-"type": "",
+"type": "normal",
 "media": {},
 "question": "In welcher Epoche war die Neue Deutsche Welle?",
-"duration": 20,
+"duration": 10,
 "A": {
     "text": "60er",
     "correct": false
@@ -17,6 +17,115 @@
 }, "D": {
     "text": "90er",
     "correct": false
-}}
+}},
 
+{
+"type": "text",
+"media": {},
+"question": "In welchem Jahr war die Tschernobyl Katastrophe",
+"duration": 20,
+"correct": ["1986"]
+},
+
+{
+"type": "truefalse",
+"media": {},
+"question": "Die Punk-Kultur war politisch",
+"duration": 10,
+"isRight": true
+},
+
+{
+"type": "text",
+"media": {},
+"question": "Wie hieß der Nachfolger des Walkman",
+"duration": 20,
+"correct": ["Discman"]
+},
+
+
+{
+"type": "select",
+"media": {},
+"question": "Wähle alle Bands des Britpops aus",
+"duration": 30,
+"A": {
+    "text": "Oasis",
+    "correct": true
+}, "B": {
+    "text": "Coldplay",
+    "correct": true
+}, "C": {
+    "text": "Blue",
+    "correct": true
+}, "D": {
+    "text": "Nirvana",
+    "correct": false
+}},
+
+
+{
+"type": "select",
+"media": {},
+"question": "Wähle alle Filme aus den 90ern aus",
+"duration": 30,
+"A": {
+    "text": "Forrest Gump",
+    "correct": true
+}, "B": {
+    "text": "Terminator 2",
+    "correct": true
+}, "C": {
+    "text": "Terminator",
+    "correct": false
+}, "D": {
+    "text": "Zurrück in die Zukunft",
+    "correct": false
+}},
+
+{
+"type": "text",
+"media": {},
+"question": "Welche Modemarke hat mit Fast Fashion großen Erfolg",
+"duration": 30,
+"correct": ["Shein"]
+},
+
+{
+"type": "normal",
+"media": {},
+"question": "In welchem Jahr wurde die ISS gebaut",
+"duration": 30,
+"A": {
+    "text": "1988",
+    "correct": false
+}, "B": {
+    "text": "1995",
+    "correct": false
+}, "C": {
+    "text": "1998",
+    "correct": true
+}, "D": {
+    "text": "2001",
+    "correct": false
+}},
+
+{
+"type": "normal",
+"media": {},
+"question": "Das größte Milieu",
+"duration": 30,
+"A": {
+    "text": "Adaptiv-Pragmatisch",
+    "correct": true
+}, "B": {
+    "text": "Prekär",
+    "correct": false
+}, "C": {
+    "text": "Traditionell-Bürgerlich",
+    "correct": false
+}, "D": {
+    "text": "Postmaterial",
+    "correct": false
+}}
 ]}
