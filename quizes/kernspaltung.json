@@ -1,0 +1,132 @@
+{"questions": [
+
+    {
+    "type": "normal",
+    "media": {},
+    "question": "Welche Spaltprodukte können bei Uran 236 entstehen?",
+    "duration": 20,
+    "A": {
+        "text": "Krypton-89 & Barium-144",
+        "correct": true
+    }, "B": {
+        "text": "Neon-54 & Caesium-97",
+        "correct": false
+    }, "C": {
+        "text": "Xenon-143 & Strontium-90",
+        "correct": true
+    }, "D": {
+        "text": "Plutonium-177 & Uran-124",
+        "correct": false
+    }},
+    
+    {
+    "type": "text",
+    "media": {},
+    "question": "In welchem Jahr war die Tschernobyl Katastrophe",
+    "duration": 20,
+    "correct": ["1986"]
+    },
+    
+    {
+    "type": "truefalse",
+    "media": {},
+    "question": "Der Druckwasserreaktor ist umweltschonender als seine Alternativen",
+    "duration": 10,
+    "isRight": true
+    },
+    
+    {
+    "type": "text",
+    "media": {},
+    "question": "Unter welchem Namen ist die größte Nuklearkatastrophe in Japan bekannt?",
+    "duration": 30,
+    "correct": ["Fukushima"]
+    },
+    
+    
+    {
+    "type": "select",
+    "media": {},
+    "question": "Wähle alle Reaktortypen aus",
+    "duration": 30,
+    "A": {
+        "text": "Schmelzwasserreaktor",
+        "correct": false
+    }, "B": {
+        "text": "Siedewasserreaktor",
+        "correct": true
+    }, "C": {
+        "text": "Druckwasserreaktor",
+        "correct": true
+    }, "D": {
+        "text": "Hartwasserreaktor",
+        "correct": false
+    }},
+    
+    
+    {
+    "type": "select",
+    "media": {},
+    "question": "Wähle alle Komponenten der Urananreicherung aus",
+    "duration": 30,
+    "A": {
+        "text": "Yellowcake",
+        "correct": true
+    }, "B": {
+        "text": "UF-8",
+        "correct": false
+    }, "C": {
+        "text": "Uran-238",
+        "correct": true
+    }, "D": {
+        "text": "Strabidium-247",
+        "correct": false
+    }},
+    
+    {
+    "type": "text",
+    "media": {},
+    "question": "Die Reaktionen im Reaktorkern werden durch _____ gesteuert.",
+    "duration": 30,
+    "correct": ["Kontrollstäbe", "Kontrollelemente", "Wasser"]
+    },
+    
+    {
+    "type": "normal",
+    "media": {},
+    "question": "In welchem Jahr wurde die ISS gebaut",
+    "duration": 30,
+    "A": {
+        "text": "1988",
+        "correct": false
+    }, "B": {
+        "text": "1995",
+        "correct": false
+    }, "C": {
+        "text": "1998",
+        "correct": true
+    }, "D": {
+        "text": "2001",
+        "correct": false
+    }},
+    
+    {
+    "type": "normal",
+    "media": {},
+    "question": "Das größte Milieu",
+    "duration": 30,
+    "A": {
+        "text": "Adaptiv-Pragmatisch",
+        "correct": true
+    }, "B": {
+        "text": "Prekär",
+        "correct": false
+    }, "C": {
+        "text": "Traditionell-Bürgerlich",
+        "correct": false
+    }, "D": {
+        "text": "Postmaterial",
+        "correct": false
+    }}
+    ]}
+    
